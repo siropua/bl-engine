@@ -1,0 +1,42 @@
+AddDefaultCharset UTF-8
+
+php_flag magic_quotes_gpc Off
+php_flag magic_quotes_runtime Off
+
+DirectoryIndex index.php index.html index.htm
+
+RedirectMatch ^go/http:.+//(.+)$ http://$1
+
+RewriteEngine On
+
+
+RewriteRule ^go/(.+)$ go.php?url=$1 [L]
+
+RewriteRule ^rss/(.*)\.xml$ static/xml/$1.xml [R]
+
+RewriteRule ^sitemap\.xml$ index.php?section=sitemap [L]
+
+RewriteCond %{HTTP_HOST} ^www\.(.*)
+RewriteRule ^(.*)   http://%1/$1 [R=301,L]
+
+RewriteCond     %{REQUEST_FILENAME} !\.thumbs/
+RewriteRule "(^|/)\." - [F]
+
+RewriteRule ^(ajax|json)/.+$ ajax.php [L,QSA]
+
+
+RewriteCond %{THE_REQUEST} ^GET\ .*/index\.(php|html|htm)\ HTTP
+RewriteRule ^(.*)index\.(php|html|htm)$ /$1 [R=301,L]
+
+RewriteCond	%{REQUEST_FILENAME} !-f
+RewriteCond	%{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)	index.php [L,QSA]
+
+Options -Indexes
+
+
+# Вот это надо заменить на название папки с движком
+#      |__________________________________
+#                                         |
+#                                         V
+RewriteRule ^_admin-engine/ajax/.*\.php$ engine/admin/ajax.php [L,QSA]

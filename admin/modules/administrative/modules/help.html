@@ -1,0 +1,184 @@
+<html>
+<head>
+	<title>Константы, доступные модулям</title>
+	<style>
+		body,table{
+			font-family: arial;
+			background: white;
+			font-size: 12px;
+		}
+		td.const_php{
+			font-weight: bold;
+			vertical-align: top;
+			color: Navy;
+		}
+		td.const_tpl{
+			font-weight: bold;
+			color: #000153;
+			vertical-align: top;
+		}
+		td.descr{
+			vertical-align: top;
+		}
+		.header{
+			background: #483D8B;
+			color: White;
+			font-weight: bold;
+		}
+		.hint{
+			font-size: 11px;
+			color: #727272;
+		}
+		.var{
+			font-weight: bold;
+			color: Maroon;
+		}
+		.code{
+			color: Black;
+			font-family: monospace;
+		}
+		tr{
+			background: White;
+		}
+		.info_panel{
+			background: #FFE4B5;
+			margin: 2px;
+			padding: 5px;
+			border: 1px solid black;
+		}
+	</style>
+</head>
+<body>
+<h1>Константы и переменные, доступные модулям</h1>
+<table cellpadding="2" cellspacing="1" border="0" style="background:black;">
+	<tr class="header">
+		<td>PHP</td>
+		<td>TPL</td>
+		<td>Описание</td>
+	</tr>
+
+	<tr>
+		<td class="const_php">ADMIN_PATH</td>
+		<td class="const_tpl">-</td>
+		<td class="descr">Абсолютный путь на сервере к корню админки<div class="hint">в конце <strong>не</strong> содержит слеша</div></td>
+	</tr>
+	<tr>
+		<td class="const_php">ADMIN_URL</td>
+		<td class="const_tpl">{$ADMIN_URL}</td>
+		<td class="descr">Относительный Web-Адрес к корню админки.<div class="hint">в конце <strong>не</strong> содержит слеша</div></td>
+	</tr>
+
+	<tr>
+		<td class="const_php">ADMIN_DIR</td>
+		<td class="const_tpl">-</td>
+		<td class="descr">Каталог, где хранится админка.<div class="hint">Например, <strong>admin</strong>. Если админка распологается в корне домена, константа пуста.</div></td>
+	</tr>
+	
+	<tr>
+		<td class="const_php"><div class="hint">можно использовать<br>
+		<span class="code"><span class="var">$db</span>->totq</span></div></td>
+		<td class="const_tpl">{$TOTALDBQUERIES}</td>
+		<td class="descr">Количество запросов к SQL-серверу</td>
+	</tr>
+	<tr>
+		<td class="const_php">-</td>
+		<td class="const_tpl">{$TIME}</td>
+		<td class="descr">Время выполнения скрипта, сек.</td>
+	</tr>
+	<tr>
+		<td class="const_php">ROOT_TEMPLATES_URL</td>
+		<td class="const_tpl">{$ROOT_TEMPLATES}</td>
+		<td class="descr">Относительный путь к шаблонам (текущему скину) админки.</td>
+	</tr>
+	<tr>
+		<td class="const_php">ROOT_TEMPLATES_DIR</td>
+		<td class="const_tpl">-</td>
+		<td class="descr">Каталог, где хранятся основные шаблоны админки.<div class="hint">Например, <strong>templates</strong></div></td>
+	</tr>
+	
+	<tr>
+		<td class="const_php">MODULES_PATH</td>
+		<td class="const_tpl">-</td>
+		<td class="descr">Абсолютный путь на сервере к каталогу с модулями</td>
+	</tr>
+	
+	<tr>
+		<td class="const_php">AUTH_TABLE</td>
+		<td class="const_tpl">-</td>
+		<td class="descr">Таблица с логинами/паролями админов</td>
+	</tr>
+	<tr>
+		<td class="const_php">LOG_TABLE</td>
+		<td class="const_tpl">-</td>
+		<td class="descr">Таблица с логами админки</td>
+	</tr>
+	<tr>
+		<td class="const_php">MODULE_PATH</td>
+		<td class="const_tpl">-</td>
+		<td class="descr">Абсолютный путь на сервере к текущему модулю.
+		<div class="hint">в конце <strong>не</strong> содержит слеша</div></td>
+	</tr>
+
+	<tr>
+		<td class="const_php">MODULE_SELF</td>
+		<td class="const_tpl">{$MODULE_SELF}</td>
+		<td class="descr">Относительный путь к виртуальному расположению модуля. Его web-пути. Если задана вкладка, учитывается и она.
+		<div class="hint">Например, можно использовать в action'ах форм, чтобы сабмитить на самого себя с учетом текущей вкладки.</div></td>
+	</tr>
+	
+	<tr>
+		<td class="const_php">MODULE_ROOT</td>
+		<td class="const_tpl">{$MODULE_ROOT}</td>
+		<td class="descr">Относительный путь к виртуальному расположению модуля. Его web-пути. При этом, вкладка модуля не учитывается.
+		<div class="hint">Например, можно использовать в action'ах форм, чтобы сабмитить на самого себя без учета текущей вкладки.</div></td>
+	</tr>
+	
+	<tr>
+		<td class="const_php">MODULE_URL</td>
+		<td class="const_tpl">{$MODULE_URL}</td>
+		<td class="descr">Относительный путь к реальному расположению папки с модулем.
+		<div class="hint">Например, можно использовать для загрузки каких-либо ресурсов из папки модуля - картинок, стилей, java-скриптов.<br>
+<strong>При этом:</strong> Запрещено получать из реального расположения модуля прямым доступом tpl, ini и php файлы. Для безопасности.</div></td>
+	</tr>
+
+	<tr>
+		<td class="const_php"><span class="code"><span class="var">$module_info</span></span></td>
+		<td class="const_tpl">{$MODULE_INFO}</td>
+		<td class="descr">Компилированная информация о модуле.</td>
+	</tr>
+	<tr>
+		<td class="const_php"><div class="code"><span class="var">$tab</span></div></td>
+		<td class="const_tpl">{$cur_tab}</td>
+		<td class="descr">Если модуль содержит вкладки - имя текущей вкладки. Иначе - не задано.</td>
+	</tr>
+	<tr>
+		<td class="const_php"><div class="code"><span class="var">$db</span></div></td>
+		<td class="const_tpl">-</td>
+		<td class="descr">Экземпляр PEAR-объекта для работы с SQL</td>
+	</tr>
+	<tr>
+		<td class="const_php"><div class="code"><span class="var">$tpl</span></div></td>
+		<td class="const_tpl">-</td>
+		<td class="descr">Экземпляр наследника T <div class="hint">(объявлен в <span class="code">ADMIN_PATH/lib/admin.smarty.class.php</span>. Там же содержит все его настройки)</div></td>
+	</tr>
+	<tr>
+		<td class="const_php"></td>
+		<td class="const_tpl"></td>
+		<td class="descr"></td>
+	</tr>
+
+
+	
+	
+	<tr>
+		<td class="const_php"></td>
+		<td class="const_tpl"></td>
+		<td class="descr"></td>
+	</tr>
+</table>
+<br>
+<br>
+
+<div class="info_panel">Важно: Т.к. для наглядности и красоты в админке использован <span class="code">mod_rewrite</span>, то напрямую массив <span class="code"><span class="var">$_GET</span>[]</span> не доступен. Для этого он парсится из <span class="code"><span class="var">$_SERVER</span>['REQUEST_URI']</span>. А за этим нужно следить.</div>
+</body>
+</html>

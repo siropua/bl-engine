@@ -1,0 +1,3 @@
+Allow From All
+Deny From None
+RewriteEngine off

@@ -1,0 +1,6 @@
+<files *.php>
+Deny From All
+</files>
+<files *.tpl>
+Deny From All
+</files>

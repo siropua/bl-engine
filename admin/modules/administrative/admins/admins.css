@@ -1,0 +1,24 @@
+#autoRights ul{
+	list-style: none;
+	padding: 0;
+	margin: 0;	
+}
+
+#autoRights{
+	border: 1px solid #aaa;
+}
+
+.modulesBlock{
+
+	padding-left: 1em;
+	
+}
+
+.tabsNrights li{
+	padding-left: 1em;
+}
+
+#fNewPass{
+	font-size: 2em;
+	
+}
