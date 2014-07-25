@@ -22,6 +22,17 @@ if [ ! -d ${ROOT_DIR}/users-data ]; then
 	mkdir ${ROOT_DIR}/users-data
 	echo 'RewriteEngine Off' > ${ROOT_DIR}/users-data/.htaccess
 fi
+
+if [ ! -d ${ENGINE_DIR}/var ]; then
+	echo "Creating temporarty dir"
+	mkdir ${ENGINE_DIR}/var
+	mkdir ${ENGINE_DIR}/var/templates_c
+	mkdir ${ENGINE_DIR}/var/logs
+	chmod -R 0777 ${ENGINE_DIR}/var
+fi
+
+
+
 chmod 777 ${ROOT_DIR}/users-data
 
 # делаем все временные каталоги писабельными
