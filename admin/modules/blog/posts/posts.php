@@ -49,7 +49,7 @@ class module_posts extends rMyAdminModule{
 		$this->assign('posts', $posts);
 		$this->assign('pages', $pager->getPagesStr($total));
 		$this->assign('total', $total);
-		$this->assign('blogs', $this->app->db->selectCol('SELECT id AS ARRAY_KEY, name FROM ?# ORDER BY name', $rBlog->getSetting('blogs_table')));
+		//$this->assign('blogs', $this->app->db->selectCol('SELECT id AS ARRAY_KEY, name FROM ?# ORDER BY name', $rBlog->getSetting('blogs_table')));
 
 	}
 
@@ -61,6 +61,8 @@ class module_posts extends rMyAdminModule{
 		$m->Run();
 
 		$m->loadPost($id);
+
+		$this->app->render();
 
 	}
 

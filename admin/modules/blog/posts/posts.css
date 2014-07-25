@@ -234,3 +234,8 @@ li.sortable-placeholder {
 
 #blogPostForm[data-mode=photo]{
 }
+
+
+.action-buttons{
+	white-space: nowrap;
+}

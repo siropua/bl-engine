@@ -55,7 +55,9 @@
 	{if count($blogs) > 1}<div class="form-group">
 		<label>Рубрика</label>
 		<select name="blog_id" class="form-control">
-			{html_options options=$blogs selected=$blogItem.blog_id}
+			{foreach from=$blogs item=b}
+			<option value="{$b.id}">{$b.name}</option>
+			{/foreach}
 		</select>
 	</div>
 	{else}

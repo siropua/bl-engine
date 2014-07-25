@@ -80,8 +80,9 @@
 		{else}&nbsp;
 		{/if}</td>
 		<td><div class="btn-group action-buttons">
-			<a href="?ashtml={$p.id}" title="В виде HTML" class="btn btn-xs btn-default"><i class="fa fa-code"></i></a>
-			<button type="button" title="Удалить пост" class="btn btn-xs btn-danger delete-post"><i class="fa fa-trash-o"></i></button>
+			<nowrap>
+				<a href="?ashtml={$p.id}" title="В виде HTML" class="btn btn-xs btn-default"><i class="fa fa-code"></i></a><button type="button" title="Удалить пост" class="btn btn-xs btn-danger delete-post"><i class="fa fa-trash-o"></i></button>
+			</nowrap>
 		</div>
 		</td>
 	</tr>
