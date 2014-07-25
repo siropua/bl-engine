@@ -40,7 +40,7 @@ try{
 		
 
 		require_once "rlib/rDBSimple.php";
-		$db = rDBSimple::connect('mysql://'.DB_USER.':'.DB_PASS.'@'.DB_HOST.'/'.DB_NAME);
+		$db = rDBSimple::connect('mypdo://'.DB_USER.':'.DB_PASS.'@'.DB_HOST.'/'.DB_NAME);
 		$db->setErrorHandler('newDBErrorHandler');
 		$db->query('SET NAMES UTF8');
 
@@ -94,8 +94,14 @@ try{
 			/**
 			хуярим таблички!
 			**/
+			$link = mysql_connect(DB_HOST, DB_USER, DB_PASS);
+			
+			if(!$link) exit(mysql_error());
+						
 			foreach($tables_files as $f){
-				$db->query(trim(file_get_contents($f)));
+			    //$qr =    mysql_query(file_get_contents($f));
+			    //if(!$qr) exit(mysql_error());
+			    $db->query(trim(file_get_contents($f)));
 			}
 
 			
