@@ -57,7 +57,7 @@
 
 		{if $p.visible}<img src="{$ADMIN_IMG}star.png" alt="[на главной]" title="Новость на главной">{/if}
 		{if $p.mainpic}<i src="{$ADMIN_IMG}image.png" alt="[есть картинка]" rel="{$p.res_url}t-{$p.mainpic}" class="mainpicPreview fa fa-picture-o"></i>{/if} 
-		{if $p.video_type != ''}<img src="{$ADMIN_IMG}film-cast.png" alt="[есть видео]" title="Видео-новость">{/if}
+		{if $p.video_type != ''}<i class="fa fa-file-video-o" title="Видео-новость"></i>{/if}
 		
 		{if $p.geo_lat}
 		<img src="{$ADMIN_IMG}map-pin.png" width="16" height="16" alt="+" title="Пост указан на карте">
@@ -79,7 +79,7 @@
 		{/foreach}
 		{else}&nbsp;
 		{/if}</td>
-		<td><div class="btn-group">
+		<td><div class="btn-group action-buttons">
 			<a href="?ashtml={$p.id}" title="В виде HTML" class="btn btn-xs btn-default"><i class="fa fa-code"></i></a>
 			<button type="button" title="Удалить пост" class="btn btn-xs btn-danger delete-post"><i class="fa fa-trash-o"></i></button>
 		</div>
