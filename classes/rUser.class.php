@@ -246,7 +246,7 @@ class rUser{
 			setcookie($this->_cookie_prefix.'hash', $this->_data[PASS_FIELD], $save_time, $this->_cookie_path);
 
 		$this->_db->query('UPDATE ?# SET ip = ?, last_login = ? WHERE id = ?',
-			USERS_TABLE, $this->getIP(), time(), $this->_ID);
+			USERS_TABLE, $this->getIntIP(), time(), $this->_ID);
 
 		$this->auth();
 	}
@@ -504,7 +504,7 @@ class rUser{
 	*/
 	function doHit(){
 		$this->_db->query('UPDATE ?# SET hits = hits + 1, lastpage = ?, ip = ? WHERE id = ?d',
-			USERS_TABLE, @$_SERVER['REQUEST_URI'], $this->getIP(), $this->_ID);
+			USERS_TABLE, @$_SERVER['REQUEST_URI'], $this->getIntIP(), $this->_ID);
 	}
 
 	/**
