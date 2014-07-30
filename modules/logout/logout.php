@@ -7,7 +7,7 @@ class module_logout extends rMyModule{
 
 		$redirect = empty($_SERVER['HTTP_REFERER']) ? ROOT_URL : $_SERVER['HTTP_REFERER'];
 
-		if(!empty($_GET['key']) && $app->user->authed() && (md5($app->user->datereg) == $_GET['key'])){
+		if(!empty($_REQUEST['key']) && $app->user->authed() && (md5($app->user->datereg) == $_REQUEST['key'])){
 			$app->user->logout();
 		}
 
