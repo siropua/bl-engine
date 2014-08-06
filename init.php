@@ -51,12 +51,24 @@ try{
 		if(strpos($class, '\\')){
 			// используем неймспейсы (разложено по каталогам)
 			$parts = explode('\\', $class);
+			$file2include = str_replace('\\', DIRECTORY_SEPARATOR, $class).'.class.php';
+
 			if(substr(end($parts), 0, 3) == 'rMy'){
-				$file2include = str_replace('\\', DIRECTORY_SEPARATOR, $class).'.class.php';
+				
+
 				if(file_exists(SITE_PATH.'/lib/'.$file2include))
+				{
 					include_once SITE_PATH.'/lib/'.$file2include;
-				else
+				}
+				elseif(file_exists(ENGINE_PATH.'/lib/'.$file2include))
+				{
 					include_once ENGINE_PATH.'/lib/'.$file2include;
+				}
+				
+			}else{
+				if (file_exists(ENGINE_PATH.'/classes/'.$file2include)) {
+					include_once ENGINE_PATH.'/classes/'.$file2include;
+				}
 			}
 			
 		}
