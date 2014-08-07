@@ -1,7 +1,7 @@
 AddDefaultCharset UTF-8
 
-php_flag magic_quotes_gpc Off
-php_flag magic_quotes_runtime Off
+#php_flag magic_quotes_gpc Off
+#php_flag magic_quotes_runtime Off
 
 DirectoryIndex index.php index.html index.htm
 
@@ -22,7 +22,7 @@ RewriteRule ^(.*)   http://%1/$1 [R=301,L]
 RewriteCond     %{REQUEST_FILENAME} !\.thumbs/
 RewriteRule "(^|/)\." - [F]
 
-RewriteRule ^(ajax|json)/.+$ ajax.php [L,QSA]
+RewriteRule ^(ajax|json)/.+$ index-ajax.php [L,QSA]
 
 
 RewriteCond %{THE_REQUEST} ^GET\ .*/index\.(php|html|htm)\ HTTP
@@ -33,10 +33,3 @@ RewriteCond	%{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)	index.php [L,QSA]
 
 Options -Indexes
-
-
-# Вот это надо заменить на название папки с движком
-#      |__________________________________
-#                                         |
-#                                         V
-RewriteRule ^_admin-engine/ajax/.*\.php$ engine/admin/ajax.php [L,QSA]
