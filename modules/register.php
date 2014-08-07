@@ -40,6 +40,7 @@ class module_register extends rMyModule{
 		}
 
 		$salt = rMyUser::getRandSalt();
+		$access_token = rMyUser::generateAccessToken();
 		$this->app->db->query('INSERT INTO users SET ?a', array(
 			LOGIN_FIELD => $d['login'],
 			'password' => $this->app->user->hashPassword($d['pass'], $salt),
@@ -47,6 +48,7 @@ class module_register extends rMyModule{
 			'full_name' => $d['login'],
 			'ip' => rMyUser::getIntIP(),
 			'salt' => $salt,
+			'access_token' => $access_token,
 			'datereg' => time()
 		));
 

@@ -235,6 +235,21 @@ class rUser{
 		return LOGIN_OK;
 	}
 
+	public function authByToken($access_token)
+	{
+		$this->_data = $this->_db->selectRow($this->_selectString.' WHERE access_token = ?', $access_token);
+
+		if(!$this->_data) return false;
+
+		$this->_fetchUserData();
+
+		$this->_authed = true;
+		$this->_auth_checked = true;
+		$this->_can = unserialize($this->_data['rights']);
+
+		return true;
+	}
+
 	public function doLogin($save_time = 0)
 	{
 		$_COOKIE[$this->_cookie_prefix.'uid'] =
@@ -272,6 +287,14 @@ class rUser{
 		}
 		return md5($password);
 	}
+
+	/**
+		Генерирует случайный токен для авторизации
+	**/
+	static public function generateAccessToken()
+	{
+		return sha1(uniqid(rand(1, 1000), true));
+	}
 	
 	/**
 	* Устанавливает пароль
@@ -282,7 +305,7 @@ class rUser{
 	function setPassword($password, $forceLogin = true){
 		$p = $this->hashPassword($password);
 		$l = $this->authed();
-		$this->setField(PASS_FIELD, $p);
+		$this->setFields(array(PASS_FIELD => $p, 'access_token' => $this->generateAccessToken()));
 		if($l && $forceLogin) $this->login($this->_data[LOGIN_FIELD], $password);
 	}
 
@@ -300,6 +323,8 @@ class rUser{
 
 		setcookie($this->_cookie_prefix.'uid', 0, 0, $this->_cookie_path);
 		setcookie($this->_cookie_prefix.'hash', '', 0, $this->_cookie_path);
+
+		$this->setField('access_token', $this->generateAccessToken());
 
 		$this->_resetState();
 
@@ -368,7 +393,9 @@ class rUser{
 	* @return bool
 	*/
 	function changePassword($new_pass){
-		$this->_db->query('UPDATE ?# SET password = ? WHERE id = ?d', USERS_TABLE, $this->hashPassword($new_pass), $this->_ID);
+		$this->_db->query('UPDATE ?# SET password = ?, access_token = ? WHERE id = ?d', 
+			USERS_TABLE, $this->hashPassword($new_pass), $this->generateAccessToken(), $this->_ID
+		);
 		if($this->_authed) $this->login($this->_data[LOGIN_FIELD], $new_pass);
 		return true;
 	}
