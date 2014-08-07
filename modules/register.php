@@ -65,16 +65,16 @@ class module_register extends rMyModule{
 	public function hasFieldsErrors($d)
 	{
 		// пустой логин
-		if(empty($d['login'])) return 'empty_login';
+		if(empty($d['login'])) return 'EMPTY_LOGIN';
 
 		// логин не подходит
-		if(!preg_match(LOGIN_PREG, $d['login'])) return 'wrong_login';
+		if(!preg_match(LOGIN_PREG, $d['login'])) return 'WRONG_LOGIN';
 
 		// пустой пароль
-		if(empty($d['pass']) || empty($d['pass2'])) return 'empty_password';
+		if(empty($d['pass']) || empty($d['pass2'])) return 'EMPTY_PASSWORD';
 
 		// пароли не совпадают
-		if($d['pass'] != $d['pass2']) return 'passwords_not_match';
+		if($d['pass'] != $d['pass2']) return 'PASSWORDS_NOT_MATCH';
 
 		return false;
 	}
