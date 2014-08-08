@@ -7,9 +7,9 @@
 	Наследовано от rSimpleApplication, отличается тем, что умеет работать с базой данных
 **/
 
-
 require_once 'classes/rSimpleApplication.class.php';
 require_once 'rlib/settings.class.php';
+require_once 'classes/rTableObj.class.php';
 
 abstract class rApplication extends rSimpleApplication{
 
