@@ -36,6 +36,8 @@ try{
 	        }
 	}
 
+	require_once 'core/baseTableModel.class.php';
+
 
 
 	// автоподключение классов 
@@ -46,6 +48,20 @@ try{
 				include_once SITE_PATH.'/lib/'.$file2include;
 			else
 				include_once ENGINE_PATH.'/lib/'.$file2include;
+		}elseif (substr($class, 0, 10) == 'basemodel_') {
+			$file2include = substr($class, 10).'.class.php';
+			
+			if(file_exists(SITE_PATH.'/models/base/'.$file2include)){
+				include_once SITE_PATH.'/models/base/'.$file2include;
+				return;
+			} //else echo 'FILE NOT FOUND '.SITE_PATH.'/models/base/'.$file2include;
+			exit;
+		}elseif (substr($class, 0, 6) == 'model_') {
+			$file2include = substr($class, 6).'.class.php';
+			if(file_exists(SITE_PATH.'/models/'.$file2include)){
+				include_once SITE_PATH.'/models/'.$file2include;
+				return;
+			}
 		}
 
 		if(strpos($class, '\\')){

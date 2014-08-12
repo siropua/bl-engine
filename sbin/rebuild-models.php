@@ -67,9 +67,9 @@ class modelRebuilder
 			return false;
 		}
 
-		$code = "<?php\n\n".$code;
+		$code = "<?php\n\nuse blEngine\baseTableModel;\n\n".$code;
 
-		file_put_contents($this->path.'/'.'basemodel_'.$this->translateSQLNameToPHP($tableInfo['table_name']).'.class.php', $code);
+		file_put_contents($this->path.'/'.$this->translateSQLNameToPHP($tableInfo['table_name']).'.class.php', $code);
 	}
 
 	public function getTableInfo($table)
@@ -121,12 +121,12 @@ class modelRebuilder
 
 	public function getClassCode($tableInfo)
 	{
-		$code = 'class basemodel_'.$this->translateSQLNameToPHP($tableInfo['table_name']).' extends baseModel';
+		$code = 'class basemodel_'.$this->translateSQLNameToPHP($tableInfo['table_name']).' extends baseTableModel';
 		$code .= "\n{\n";
-		$code .= "\tprotected \$pKey = '{$tableInfo['pKey']}';\n";
-		$code .= "\tprotected \$tableName = '{$tableInfo['table_name']}';\n";
+		$code .= "\tstatic protected \$pKey = '{$tableInfo['pKey']}';\n";
+		$code .= "\tstatic protected \$tableName = '{$tableInfo['table_name']}';\n";
 		$code .= "\n";
-		$code .= "\tprotected \$fields = ".var_export($tableInfo['fields'], 1).";\n";
+		$code .= "\tstatic protected \$fields = ".var_export($tableInfo['fields'], 1).";\n";
 		$code .= "\n}";
 
 
