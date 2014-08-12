@@ -10,6 +10,7 @@
 require_once 'classes/rSimpleApplication.class.php';
 require_once 'rlib/settings.class.php';
 require_once 'classes/rTableObj.class.php';
+require_once 'core/DB.class.php';
 
 abstract class rApplication extends rSimpleApplication{
 
@@ -31,14 +32,7 @@ abstract class rApplication extends rSimpleApplication{
 	}
 
 	protected function initDB(){
-		require_once "rlib/rDBSimple.php";
-		$this->db = rDBSimple::connect('mypdo://'.DB_USER.':'.DB_PASS.'@'.DB_HOST.'/'.DB_NAME);
-		$this->db->setErrorHandler('stdDBErrorHandler');
-		if(defined('DB_SET_NAMES') && DB_SET_NAMES)
-			$this->db->query('SET NAMES '.DB_SET_NAMES);
-
-		if(function_exists('cache_Memcache'))
-			$this->db->setCacher('cache_Memcache');
+		$this->db = blEngine\DB::getInstance();
 
 	}
 

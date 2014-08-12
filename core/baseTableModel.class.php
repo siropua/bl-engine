@@ -26,19 +26,19 @@ abstract class baseTableModel
 	/**
 	*	Заполняет данные из массива в класс, контролируя, чтобы в данных был primary key
 	**/
-	public function hydrate($data)
+	static public function hydrate($data)
 	{
 		if(!static::$pKey) throw new modelException('pKey not defined');
 		if(!isset($data[static::$pKey])) throw new modelException('pKey '.static::$pKey.' not found');
 		
 		
-		foreach (static::$fields as $key => $value) 
-		{
-			if(isset($data[$key]))
-			{
-				$this->data[$key] = $value;
-			}
-		}
+		// foreach (static::$fields as $key => $value) 
+		// {
+		// 	if(isset($data[$key]))
+		// 	{
+		// 		$stat->data[$key] = $value;
+		// 	}
+		// }
 
 		return new static($data);
 	}
@@ -66,7 +66,7 @@ abstract class baseTableModel
 		}
 
 		$newID = DB::getInstance()->query('INSERT INTO ?# SET ?a', static::$tableName, $insData);
-		
+
 		if($doGetAfterInsert){
 			return static::get($newID);
 		}else{
