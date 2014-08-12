@@ -50,7 +50,12 @@ abstract class rSimpleApplication{
 
 
 	protected function initTPL(){
-		$this->tpl = new rMyTPL;
+
+		if(PHP_SAPI == 'cli'){
+			$this->tpl = new rMyTPL_CLI;
+		}else{
+			$this->tpl = new rMyTPL;
+		}
 	}
 
 	protected function initURL(){

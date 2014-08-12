@@ -61,7 +61,7 @@ try{
 
 	echo "Starting rebuild...\n";
 
-	$rebuilder = new modelRebuilder(SITE_PATH.'models/base');
+	$rebuilder = new modelRebuilder(SITE_PATH.'/models/base');
 
 	$rebuilder->rebuild(array(
 		'hotel_checkins',
