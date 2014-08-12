@@ -28,11 +28,11 @@ abstract class baseTableModel
 	**/
 	public function hydrate($data)
 	{
-		if(!self::$pKey) throw new modelException('pKey not defined');
-		if(!isset($data[self::$pKey])) throw new modelException('pKey '.self::$pKey.' not found');
+		if(!static::$pKey) throw new modelException('pKey not defined');
+		if(!isset($data[static::$pKey])) throw new modelException('pKey '.static::$pKey.' not found');
 		
 		
-		foreach (self::$fields as $key => $value) 
+		foreach (static::$fields as $key => $value) 
 		{
 			if(isset($data[$key]))
 			{
@@ -40,7 +40,7 @@ abstract class baseTableModel
 			}
 		}
 
-		return new self($data);
+		return new static($data);
 	}
 
 	static public function get($id)
@@ -48,19 +48,32 @@ abstract class baseTableModel
 		$data = DB::getInstance()->selectRow('SELECT * FROM ?# WHERE ?# = ?', self::$table, self::$pKey, $id);
 		if(!$data) return false;
 
-		return new self($data);
+		return new static($data);
 	}
 
-	static public function create($data)
+	static public function create($data, $doGetAfterInsert = false)
 	{
 		$insData = array();
-		foreach (self::$fields as $key => $value) {
+
+		foreach (static::$fields as $key => $value) {
 			if(isset($data[$key])){
 				$insData[$key] = $data[$key];
+			}else{
+				if($key != static::$pKey && $value['default'] != ''){
+					$insData[$key] = $value['default'];
+				}
 			}
 		}
 
-		print_r($insData); exit;
+		$newID = DB::getInstance()->query('INSERT INTO ?# SET ?a', static::$tableName, $insData);
+		
+		if($doGetAfterInsert){
+			return static::get($newID);
+		}else{
+			$insData[static::$pKey] = $newID;
+			return static::hydrate($insData);
+		}
+
 	}
 }
 
