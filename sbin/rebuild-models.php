@@ -67,7 +67,7 @@ class modelRebuilder
 			return false;
 		}
 
-		$code = "<?php\n\nuse blEngine\baseTableModel;\n\n".$code;
+		$code = "<?php\n\nuse ble\baseTableModel;\n\n".$code;
 
 		file_put_contents($this->path.'/'.$this->translateSQLNameToPHP($tableInfo['table_name']).'.class.php', $code);
 	}

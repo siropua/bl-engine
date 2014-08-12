@@ -32,7 +32,7 @@ abstract class rApplication extends rSimpleApplication{
 	}
 
 	protected function initDB(){
-		$this->db = blEngine\DB::getInstance();
+		$this->db = ble\DB::getInstance();
 
 	}
 

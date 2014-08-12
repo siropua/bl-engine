@@ -1,6 +1,6 @@
 <?php
 
-namespace blEngine;
+namespace ble;
 
 /**
 * Базовая модель, от неё будем наследовать все остальные модели в системе
@@ -45,7 +45,7 @@ abstract class baseTableModel
 
 	static public function get($id)
 	{
-		$data = DB::getInstance()->selectRow('SELECT * FROM ?# WHERE ?# = ?', self::$table, self::$pKey, $id);
+		$data = DB::getInstance()->selectRow('SELECT * FROM ?# WHERE ?# = ?', static::$tableName, static::$pKey, $id);
 		if(!$data) return false;
 
 		return new static($data);

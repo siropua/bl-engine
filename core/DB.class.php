@@ -2,7 +2,7 @@
 
 
 
-namespace blEngine;
+namespace ble;
 
 class DB
 {
@@ -18,8 +18,6 @@ class DB
 	public static function getInstance()
 	{
 		if (self::$db === NULL) {
-
-			echo "DB CONNECT!<br>\n";
 
             require_once "rlib/rDBSimple.php";
 			self::$db = \rDBSimple::connect('mypdo://'.DB_USER.':'.DB_PASS.'@'.DB_HOST.'/'.DB_NAME);
