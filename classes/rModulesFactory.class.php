@@ -14,6 +14,15 @@ class rModulesFactory extends iModulesFactory{
 
 	public function getModule(){
 
+		/** проверяем, есть ли в системе роутер **/
+		if($router = $this->checkRouter()){
+			$routerResult = $router->checkRules();
+
+			if(!$routerResult) throw new Exception('Access Denied');
+
+			if(is_object($routerResult)) return $routerResult;
+		}
+
 		/** ежели у нас индекс - открываем индекс **/
 		if(!$this->rURL->path(1)){
 			return $this->getIndexModule();
@@ -179,6 +188,20 @@ class rModulesFactory extends iModulesFactory{
 			include_once ENGINE_MODULES_PATH.'/_errors/404.php';
 			return new module_engine_404($this->app);
 		}
+	}
+
+
+	/**
+	* Пытается найти на сайте settings/router.php и создать Роутер.
+	* Иначе возвращает false
+	**/
+	public function checkRouter()
+	{
+		if(file_exists(SITE_PATH.'/settings/router.php')){
+			require SITE_PATH.'/settings/router.php';
+			return new rMyRouter($this->app);
+		}
+		return false;
 	}
 
 }
