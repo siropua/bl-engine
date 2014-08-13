@@ -69,7 +69,12 @@ class modelRebuilder
 
 		$code = "<?php\n\nuse ble\baseTableModel;\n\n".$code;
 
-		file_put_contents($this->path.'/'.$this->translateSQLNameToPHP($tableInfo['table_name']).'.class.php', $code);
+		$filename = $this->translateSQLNameToPHP($tableInfo['table_name']).'.class.php';
+		file_put_contents($this->path.'/'.$filename, $code);
+		$workingModelFile = $this->path.'/../'.$filename;
+		if(!file_exists($workingModelFile)){
+			file_put_contents($workingModelFile, "<?php\n\n".$this->getWorkingClassCode($tableInfo));
+		}
 	}
 
 	public function getTableInfo($table)
@@ -129,6 +134,13 @@ class modelRebuilder
 		$code .= "\tstatic protected \$fields = ".var_export($tableInfo['fields'], 1).";\n";
 		$code .= "\n}";
 
+		return $code;
+	}
+
+	public function getWorkingClassCode($tableInfo)
+	{
+		$code = 'class model_'.$this->translateSQLNameToPHP($tableInfo['table_name']).' extends basemodel_'.$this->translateSQLNameToPHP($tableInfo['table_name']);
+		$code .= "\n{\n}\n";
 
 		return $code;
 	}
