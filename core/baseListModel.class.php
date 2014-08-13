@@ -33,8 +33,19 @@ class baseListModel
 	{
 		$className = '\\'.$this->baseModel;
 		$list = $this->getAsArray($where);
-		foreach ($list as $key => $item) {
+		echo PHP_VERSION;
+/**		
+// блять, 5.5 всетаки мало где установлен :( жаль... оч жаль!
+foreach ($list as $key => $item) {
 				yield $key => $className::hydrate($item);
 		}
+
+**/
+
+		foreach ($list as $key => $value) {
+			$list[$key] = $className::hydrate($item);
+		}
+
+		return $item;
 	}
 }
