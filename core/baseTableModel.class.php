@@ -51,6 +51,8 @@ abstract class baseTableModel
 		return new static($data);
 	}
 
+
+
 	static public function create($data, $doGetAfterInsert = false)
 	{
 		$insData = array();
@@ -74,6 +76,59 @@ abstract class baseTableModel
 			return static::hydrate($insData);
 		}
 
+	}
+
+	public function __get($key)
+	{
+		return isset($this->data[$key]) ? $this->data[$key] : NULL;
+	}
+
+	public function getID()
+	{
+		return $this->data[$this->pKey];
+	}
+
+	public function __set($key, $val)
+	{
+		$this->setFieldData($key, $val);
+	}
+
+	/**
+	* Устанавливает поле. 
+	* Если параметр instantSave = true то немедленно записывает в базу
+	**/
+	public function setFieldData($key, $val, $instantSave = false)
+	{
+		if(isset($this->fields[$key]))
+			$this->data[$key] = $val;
+
+		if($instantSave) $this->save();
+
+		return $this;
+	}
+
+	/**
+	* Сохраняет данные массива в базу
+	**/
+	public function save()
+	{
+		$this->db->query('UPDATE ?# SET ?a WHERE ?# = ?', $this->tableName, $this->data, $this->pKey, $this->getID());
+		return $this;
+	}
+
+	static public function getTableName()
+	{
+		return static::$tableName;
+	}
+
+	static public function getPKey()
+	{
+		return static::$pKey;
+	}
+
+	static public function getFieldsList()
+	{
+		return array_keys(static::$fields);
 	}
 }
 
