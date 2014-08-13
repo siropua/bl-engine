@@ -130,6 +130,12 @@ abstract class baseTableModel
 	{
 		return array_keys(static::$fields);
 	}
+
+
+	static public function me()
+	{
+		return get_called_class();
+	}
 }
 
 

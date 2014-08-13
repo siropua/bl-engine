@@ -37,6 +37,7 @@ try{
 	}
 
 	require_once 'core/baseTableModel.class.php';
+	require_once 'core/baseListModel.class.php';
 
 
 
@@ -58,6 +59,7 @@ try{
 			exit;
 		}elseif (substr($class, 0, 6) == 'model_') {
 			$file2include = substr($class, 6).'.class.php';
+			
 			if(file_exists(SITE_PATH.'/models/'.$file2include)){
 				include_once SITE_PATH.'/models/'.$file2include;
 				return;

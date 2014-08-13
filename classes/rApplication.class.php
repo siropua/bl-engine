@@ -23,6 +23,8 @@ abstract class rApplication extends rSimpleApplication{
 		parent::__construct();
 		$this->lang->setDB($this->db);
 		$this->lang->loadIDs();
+		$this->url->setAvaiableLangs(array_keys($this->lang->getIDs()));
+		$this->lang->selectLang($this->url->getCurLang());
 	}
 
 

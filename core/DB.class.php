@@ -20,7 +20,7 @@ class DB
 		if (self::$db === NULL) {
 
             require_once "rlib/rDBSimple.php";
-			self::$db = \rDBSimple::connect('mypdo://'.DB_USER.':'.DB_PASS.'@'.DB_HOST.'/'.DB_NAME);
+			self::$db = \rDBSimple::connect('mysqli://'.DB_USER.':'.DB_PASS.'@'.DB_HOST.'/'.DB_NAME);
 			self::$db->setErrorHandler('stdDBErrorHandler');
 			if(defined('DB_SET_NAMES') && DB_SET_NAMES)
 				self::$db->query('SET NAMES '.DB_SET_NAMES);
