@@ -24,3 +24,5 @@ class rNotFound extends Exception{
 class rAccessDenied extends rNotFound{
 	
 }
+
+class rUnauthorized extends Exception{}

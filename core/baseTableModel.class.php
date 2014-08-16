@@ -78,9 +78,17 @@ abstract class baseTableModel
 
 	}
 
-	public function __get($key)
+	public function getData()
 	{
-		return isset($this->data[$key]) ? $this->data[$key] : NULL;
+		return $this->data;
+	}
+
+	public function __get($key = NULL)
+	{
+		if ($key == 'data'){
+			return isset($this->data['data']) ? $this->data['data'] : $this->data;
+		}
+		return $key !== NULL && isset($this->data[$key]) ? $this->data[$key] : NULL;
 	}
 
 	public function getID()

@@ -1,7 +1,6 @@
 <?php
 
 
-
 namespace ble;
 
 class DB
