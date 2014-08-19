@@ -74,6 +74,7 @@ class module_posts_add extends rMyAdminModule{
 		@session_start();
 		unset($_SESSION['admin-temp-post-id']);
 
+
 		if(!empty($post['todo']) && ($post['todo'] == 'publish')){
 			$post['status'] = 'posted';
 		}

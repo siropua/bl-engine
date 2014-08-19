@@ -276,6 +276,7 @@
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
           <h4 class="modal-title">Список URLов</h4>
         </div>
+        <form action="#" method="post">
         <div class="modal-body">
           <textarea name="picList" id="picList" cols="30" rows="10" class="form-control"></textarea>
         </div>
@@ -283,6 +284,7 @@
           <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-remove"></i> Отмена</button>
           <button type="button" class="btn btn-success"><i class="fa fa-download"></i> Загрузить</button>
         </div>
+        </form>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
