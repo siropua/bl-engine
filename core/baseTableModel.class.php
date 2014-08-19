@@ -93,7 +93,7 @@ abstract class baseTableModel
 
 	public function getID()
 	{
-		return $this->data[$this->pKey];
+		return $this->data[static::$pKey];
 	}
 
 	public function __set($key, $val)
@@ -107,7 +107,7 @@ abstract class baseTableModel
 	**/
 	public function setFieldData($key, $val, $instantSave = false)
 	{
-		if(isset($this->fields[$key]))
+		if(isset(static::$fields[$key]))
 			$this->data[$key] = $val;
 
 		if($instantSave) $this->save();
@@ -120,7 +120,7 @@ abstract class baseTableModel
 	**/
 	public function save()
 	{
-		$this->db->query('UPDATE ?# SET ?a WHERE ?# = ?', $this->tableName, $this->data, $this->pKey, $this->getID());
+		$this->db->query('UPDATE ?# SET ?a WHERE ?# = ?', static::$tableName, $this->data, static::$pKey, $this->getID());
 		return $this;
 	}
 
