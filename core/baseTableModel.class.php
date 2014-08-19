@@ -57,6 +57,11 @@ abstract class baseTableModel
 	{
 		$insData = array();
 
+		// delete not existing fields
+		foreach ($data as $key => $value) {
+			if(!isset(static::$fields[$key])) unset($data[$key]);
+		}
+
 		foreach (static::$fields as $key => $value) {
 			if(isset($data[$key])){
 				$insData[$key] = $data[$key];
