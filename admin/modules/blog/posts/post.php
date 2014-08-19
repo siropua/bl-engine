@@ -70,9 +70,35 @@ class module_posts_post extends rMyAdminModule{
 			throw new JSONException('post-id not specified');
 		}
 
-		if(empty($_POST['urls'])){
+		if(empty($_POST['pic'])){
 			return array();
 		}
+
+		$picName = basename($_POST['pic']);
+
+
+		$b = new rMyBlog($this->app);
+		$post = new rBlogPost($b, $_POST['postID']);
+
+		$tmpPic = TMP_PATH.'/'.uniqid('webpic');
+		require 'rlib/vibrowser.inc.php';
+		$vb = new ViBrowser;
+		$vb->setURL($_POST['pic']);
+		$vb->getURLToFile($_POST['pic'], $tmpPic);
+
+		if(!file_exists($tmpPic)) throw new Exception('Cant download a pic');
+
+		$fn = $post->attachPic(array(
+			'tmp_name' => $tmpPic,
+			'name' => $picName,
+		)); 
+
+		if(!$fn) throw new JSONException('Cant attach picture!');
+
+		$result = array('ok' => 1, 'pic' => $fn);
+		
+
+		return $result;
 	}
 
 	public function Run_delete()

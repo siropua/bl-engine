@@ -176,6 +176,8 @@ $(function(){
     $(document).on('click', 'button.btn-move-pic-up', movePicUp);
     $(document).on('click', 'button.btn-move-pic-down', movePicDown);
 
+    $('#uploadPicURLs').on('click', uploadPicURLs);
+
 });
 
 
@@ -318,7 +320,7 @@ function picsAllUploaded(e, data){
 
 function	picsUploadStart(e, data){
 	$('#postPictures .pics').prepend('<div class="pics-loading"><p>загрузка картинок<span></span>...</p><div class="progress progress-striped active"><div class="progress-bar"  role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></div>');
-	console.log(data);
+	//console.log(data);
 }
 
 var bitRateInfo = '';
@@ -536,4 +538,58 @@ function movePicDown () {
 		$li.insertAfter($li.next());
 		updatePicSort();
 	}
+}
+
+
+
+function uploadPicURLs (e) {
+	var pics = $('#picList').val().trim();
+	if(!pics) {
+		$('#picList').focus();
+		return false;
+	}
+	pics = pics.split('\n');
+	if(!pics.length){
+		$('#picList').focus();
+		return false;
+	}
+	uploadPicsList(pics);
+	$('#picListModal').modal('hide');
+	$('#picList').val('');
+}
+
+var webPics = [];
+var webPicsTotal = 0;
+var webUpload = false;
+
+function uploadPicsList (list) {
+	picsUploadStart(false, false);
+	for(var i in list){
+		webPics.push(list[i]);
+		webPicsTotal = webPics.length;
+	}
+	if(!webUpload)uploadNextWebPic();
+}
+
+function uploadNextWebPic () {
+	if(webPics.length == 0) {
+		webPicsTotal = 0;
+		webUpload = false;
+		reloadPics();
+		return false;
+	}
+	webUpload = true;
+	var pic =  webPics.shift();
+	$('.pics-loading span').text('pic: '+pic+'...');
+	$.post(moduleJSON + 'post/attachweb', {pic: pic, postID: getPostID()}, function  (data) {
+		if(data.status == 200){
+			$('.pics-loading span').html(' <strong style="color: green">OK</strong> ');
+		}else{
+			$('.pics-loading span').html(' <strong style="color: red">FAIL</strong> ');
+		}
+	}).always(function  () {
+		$('#postPictures .progress .progress-bar').css({width: Math.round(100 - (webPics.length / webPicsTotal * 100))+'%'});
+		setTimeout(uploadNextWebPic, 100);
+		
+	});
 }

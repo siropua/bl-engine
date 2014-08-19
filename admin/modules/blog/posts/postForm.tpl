@@ -282,7 +282,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-remove"></i> Отмена</button>
-          <button type="button" class="btn btn-success"><i class="fa fa-download"></i> Загрузить</button>
+          <button type="button" id="uploadPicURLs" class="btn btn-success"><i class="fa fa-download"></i> Загрузить</button>
         </div>
         </form>
       </div><!-- /.modal-content -->
