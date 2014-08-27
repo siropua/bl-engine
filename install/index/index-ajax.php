@@ -25,8 +25,10 @@ try{
 
 
 	$_APP = rMyApp::getInstance();
+	$_APP->addBaseClass('rMyMultilang', 'ml');
 	$_APP->setForceAJAXHit();
 	$_isJSONMode = $_APP->testPath('json', 1);
+	define('IS_JSON_MODE', $_isJSONMode);
 
 
 	$_MODULE_METHOD = 'RunAJAX';
@@ -61,10 +63,20 @@ try{
 		$_MODULE_NAME = $_APP->path(2);
 
 
+		if(file_exists(SITE_PATH.'/settings/router.php')){
+			require SITE_PATH.'/settings/router.php';
+			$router = new rMyRouter($_APP);
+
+			$routerResult = $router->checkRules();
+
+			if(!$routerResult) throw new rAccessDenied;
+		}
+
+
 		if($_APP->path(4) && file_exists(MODULES_PATH.'/'.$_APP->path(2).'/'.$_APP->path(3).'.php')){
 			if(file_exists(MODULES_PATH.'/'.$_APP->path(2).'/'.$_APP->path(3).'.php')){
 				require_once(MODULES_PATH.'/'.$_APP->path(2).'/'.$_APP->path(3).'.php');
-				$_MODULE_NAME .= '_'.$_APP->path(3);
+				$_MODULE_NAME .= '_'.str_replace('-', '_', $_APP->path(3));
 
 			}
 		}elseif ($_APP->path(3) && file_exists(MODULES_PATH.'/'.$_APP->path(2).'/'.$_APP->path(3).'.php')) {
@@ -139,8 +151,11 @@ try{
 
 	$_Autoexec->afterAJAX($_APP, $module);
 
-	
-	
+}catch(rUnauthorized $e){
+
+	header('HTTP/1.0 401 Unauthorized');
+
+	echoJSON(false, 401, $e->getMessage());
 
 }catch(JSONException $e){
 	echoJSON(false, 503, $e->getMessage());
