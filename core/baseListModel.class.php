@@ -46,7 +46,7 @@ class baseListModel
 		return $list;
 	}
 
-	private function makeJoinString($param){
+	protected function makeJoinString($param){
 		if (is_array($param)){
 			return implode(' ', $param);
 		}
@@ -56,7 +56,7 @@ class baseListModel
 		return false;
 	}
 
-	private function makeWhereString($param){
+	protected function makeWhereString($param){
 		if (is_array($param)){
 			return implode(' AND ', $param);
 		}
@@ -66,7 +66,7 @@ class baseListModel
 		return false;
 	}
 
-	private function makeGroupString($param){
+	protected function makeGroupString($param){
 		if (is_array($param)){
 			return implode(',', $param);
 		}
@@ -76,7 +76,7 @@ class baseListModel
 		return false;
 	}
 
-	private function makeHavingString($param){
+	protected function makeHavingString($param){
 		if (is_array($param)){
 			return implode(' AND ', $param);
 		}
@@ -86,7 +86,7 @@ class baseListModel
 		return false;
 	}
 
-	private function makeOrderString($param){
+	protected function makeOrderString($param){
 		if (is_array($param)){
 			$ret = array();
 			foreach ($param as $key => $val){
@@ -100,7 +100,7 @@ class baseListModel
 		return false;
 	}
 
-	private function makeLimitString($param){
+	protected function makeLimitString($param){
 		if (is_array($param)){
 			return implode(',', $param);
 		}
@@ -115,5 +115,11 @@ class baseListModel
 		$className = '\\'.$this->baseModel;
 		$list = $this->getAsArray($conditions);
 		return baseListModelGet::ret($className, $list);
+	}
+
+	public function remove($id)
+	{
+		$className = '\\'.$this->baseModel;
+		return $this->db->query('DELETE FROM ?# WHERE ?# = ?', $className::getTableName(), $className::getPKey(), $id);
 	}
 }

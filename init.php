@@ -38,6 +38,7 @@ try{
 
 	require_once 'core/baseTableModel.class.php';
 	require_once 'core/baseListModel.class.php';
+	require_once 'core/baseTreeModel.class.php';
 	require_once 'core/router.class.php';
 	
 

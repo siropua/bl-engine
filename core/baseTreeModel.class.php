@@ -2,12 +2,6 @@
 
 namespace ble;
 
-if ((float)PHP_VERSION >= 5.5){
-	require_once('baseListModelGet.yield.class.php');
-}else{
-	require_once('baseListModelGet.foreach.class.php');
-}
-
 /**
 * Работает с деревом baseTableModel
 */
@@ -42,7 +36,7 @@ class baseTreeModel extends baseListModel
 	{
 		$list = $this->db->select(
 			sprintf(
-				'SELECT ?# AS ARRAY_KEY, ?# AS PARENT_KEY, * FROM ?#%s%s%s%s%s%s',
+				'SELECT *, ?# AS ARRAY_KEY, ?# AS PARENT_KEY FROM ?#%s%s%s%s%s%s',
 				!empty($conditions['join']) ? ' '.$this->makeJoinString($conditions['join']) : '',
 				!empty($conditions['where']) ? ' WHERE '.$this->makeWhereString($conditions['where']) : '',
 				!empty($conditions['group']) ? ' GROUP BY '.$this->makeGroupString($conditions['group']) : '',
@@ -57,10 +51,10 @@ class baseTreeModel extends baseListModel
 		return $list;
 	}
 
-//	public function get($conditions = false)
-//	{
-//		$className = '\\'.$this->baseModel;
-//		$list = $this->getAsArray($conditions);
-//		return baseListModelGet::ret($className, $list);
-//	}
+	public function get($conditions = false)
+	{
+		$className = '\\'.$this->baseModel;
+		$list = $this->getAsArray($conditions);
+		return baseTreeModelGet::ret($className, $list);
+	}
 }

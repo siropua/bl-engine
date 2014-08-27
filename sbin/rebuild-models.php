@@ -48,6 +48,10 @@ class modelRebuilder
 	public function rebuild($tables)
 	{
 		foreach ($tables as $t) {
+//			$a = array();
+//			if (preg_math('/(.*)_str$/', $t, $a) && in_array($a[1], $tables)){
+//				continue;
+//			}
 			$this->rebuldTable($t);
 		}
 	}
@@ -69,11 +73,15 @@ class modelRebuilder
 
 		$code = "<?php\n\nuse ble\baseTableModel;\n\n".$code;
 
-		$filename = $this->translateSQLNameToPHP($tableInfo['table_name']).'.class.php';
-		file_put_contents($this->path.'/'.$filename, $code);
-		$workingModelFile = $this->path.'/../'.$filename;
+		$filename = $this->translateSQLNameToPHP($tableInfo['table_name']);
+		file_put_contents($this->path.'/'.$filename.'.class.php', $code);
+		$workingModelFile = $this->path.'/../'.$filename.'.class.php';
 		if(!file_exists($workingModelFile)){
 			file_put_contents($workingModelFile, "<?php\n\n".$this->getWorkingClassCode($tableInfo));
+		}
+		$workingModelListFile = $this->path.'/../'.$filename.'List.class.php';
+		if(!file_exists($workingModelListFile)){
+			file_put_contents($workingModelListFile, "<?php\n\n".$this->getWorkingListClassCode($tableInfo));
 		}
 	}
 
@@ -90,7 +98,7 @@ class modelRebuilder
 
 		foreach ($fields as $f) {
 			$fieldData = $this->getFieldInfo($f);
-			if($fieldData['is_primary']) $pKey = $fieldData['name'];
+			if($fieldData['is_primary'] && empty($pKey)) $pKey = $fieldData['name'];
 			$tableFields[$fieldData['name']] = $fieldData;
 		}
 
@@ -142,6 +150,14 @@ class modelRebuilder
 		$code = 'class model_'.$this->translateSQLNameToPHP($tableInfo['table_name']).' extends basemodel_'.$this->translateSQLNameToPHP($tableInfo['table_name']);
 		$code .= "\n{\n}\n";
 
+		return $code;
+	}
+
+	public function getWorkingListClassCode($tableInfo)
+	{
+		$code = "class model_".$this->translateSQLNameToPHP($tableInfo['table_name'])."List extends ble\\baseListmodel\n{\n";
+		$code .= "\tpublic function __construct(){\n\t\tparent::__construct('model_".$this->translateSQLNameToPHP($tableInfo['table_name'])."');\n\t}\n";
+		$code .= "}\n";
 		return $code;
 	}
 
