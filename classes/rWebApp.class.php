@@ -121,6 +121,12 @@ class rWebApp extends rApplication{
 		return $m;
 	}
 
+	public function reload($message = '', $level = APPMSG_NOTICE)
+	{
+		if($message) $this->addMessage($message, $level);
+		$this->url->reloadPage();
+	}
+
 
 
 	/**
