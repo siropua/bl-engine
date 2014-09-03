@@ -51,8 +51,6 @@ abstract class baseTableModel
 		return new static($data);
 	}
 
-
-
 	static public function create($data, $doGetAfterInsert = false)
 	{
 		$insData = array();

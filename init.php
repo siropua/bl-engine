@@ -149,3 +149,12 @@ function formatDateTime($date = 0, $params = array())
 	return trim($ret);
 
 }
+
+function make_get_string($url, $var, $val = null){
+	$path = explode('?', $url);
+	if (!empty($path[1])){
+		$path[1] = preg_replace('/'.$var.'(=[^&]*)?/', $var.(!empty($val) ? '='.$val : ''), $path[1]);
+		return $path[0].'?'.$path[1];
+	}
+	return $url.'?'.$var.'='.$val;
+}
