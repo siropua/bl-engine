@@ -25,7 +25,6 @@ try{
 
 
 	$_APP = rMyApp::getInstance();
-	$_APP->addBaseClass('rMyMultilang', 'ml');
 	$_APP->setForceAJAXHit();
 	$_isJSONMode = $_APP->testPath('json', 1);
 	define('IS_JSON_MODE', $_isJSONMode);
