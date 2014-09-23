@@ -11,7 +11,7 @@ echo "\n\n\n";
 class modelRebuilder
 {
 
-	protected $systemTables = array("amnesia","blog_comments","blog_comments_t","blog_favorites","blog_images","blog_posts","blog_posts_ext","blog_posts_visits_map","blog_posts_votes","blog_sources","blog_tags","blog_tags_map","blog_visits","blog_visits_map","blogs","cities","countries","feedbacks","menu_links","pages","pages_comments","pages_comments_t","pages_items","ref_landings","ref_sources","ref_visits","site_settings","social_networks","stat_agents","static_pages","tags","users","users_email_changes","users_external","users_info","users_stats");
+	protected $systemTables = array("amnesia","blog_comments","blog_comments_t","blog_favorites","blog_images","blog_posts","blog_posts_ext","blog_posts_visits_map","blog_posts_votes","blog_sources","blog_tags","blog_tags_map","blog_visits","blog_visits_map","blogs","feedbacks","menu_links","pages","pages_comments","pages_comments_t","pages_items","ref_landings","ref_sources","ref_visits","site_settings","social_networks","stat_agents","static_pages","tags","users","users_email_changes","users_external","users_info","users_stats");
 
 	protected $path;
 

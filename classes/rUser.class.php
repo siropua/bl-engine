@@ -511,7 +511,7 @@ class rUser{
 	function setFields($array)
 	{
 		$res = $this->_db->query('UPDATE ?# SET ?a WHERE id = ?', USERS_TABLE, $array, $this->_ID);
-		$this->_data = $this->_data + $array;
+		$this->_data = $array + $this->_data;
 	}
 
 	/**
