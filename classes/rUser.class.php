@@ -400,6 +400,15 @@ class rUser{
 		return true;
 	}
 
+	/**
+	* rUser::checkPassword()
+	* @param sring $password
+	* @return bool
+	*/
+	function checkPassword($password){
+		return $this->hashPassword($password, $this->salt) == $this->_data[PASS_FIELD];
+	}
+
 
 
 
