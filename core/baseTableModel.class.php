@@ -12,6 +12,12 @@ abstract class baseTableModel
 	static protected $tableName = '';
 	static protected $fields = array();
 
+
+	protected $lang_key = array('id' => null, 'lang_id' => null);
+	protected $lang_data = array();
+	protected $lang_table = '_str';
+	protected $lang_field = array();
+
 	protected $db = NULL; // database link
 	
 	
@@ -55,11 +61,6 @@ abstract class baseTableModel
 	{
 		$insData = array();
 
-		// delete not existing fields
-		foreach ($data as $key => $value) {
-			if(!isset(static::$fields[$key])) unset($data[$key]);
-		}
-
 		foreach (static::$fields as $key => $value) {
 			if(isset($data[$key])){
 				$insData[$key] = $data[$key];
@@ -72,12 +73,34 @@ abstract class baseTableModel
 
 		$newID = DB::getInstance()->query('INSERT INTO ?# SET ?a', static::$tableName, $insData);
 
+		$item = false;
+
 		if($doGetAfterInsert){
-			return static::get($newID);
+			$item = static::get($newID);
 		}else{
 			$insData[static::$pKey] = $newID;
-			return static::hydrate($insData);
+			$item = static::hydrate($insData);
 		}
+
+		if(!$item) return false;
+
+
+		if (!empty($data['lang_id'])){
+			$item->lang_key = array(
+				'id' => $item->id,
+				'lang_id' => $data['lang_id']
+			);
+			foreach ($item->lang_field as $key => $function){
+				$item->lang_data[$key] = !empty($function['code']) ? $function['code'](@$data[$key]) : @$data[$key];
+			}
+			$item->db->query('INSERT INTO ?# (?#) VALUES (?a)',
+				$item->get_lang_table(),
+				array_keys($item->lang_key + $item->lang_data),
+				array_values($item->lang_key + $item->lang_data)
+			);
+		}
+
+		return $item;
 
 	}
 
@@ -113,6 +136,16 @@ abstract class baseTableModel
 		if(isset(static::$fields[$key]))
 			$this->data[$key] = $val;
 
+
+		if (in_array($key, array_keys($this->lang_field))){
+			$this->lang_data[$key] = !empty($this->lang_field[$key]['code']) ? $this->lang_field[$key]['code']($val) : $val;
+		}elseif ($key == 'lang_id'){
+			$this->lang_key = array(
+				'id' => $this->data['id'],
+				'lang_id' => $val
+			);
+		}
+
 		if($instantSave) $this->save();
 
 		return $this;
@@ -124,7 +157,35 @@ abstract class baseTableModel
 	public function save()
 	{
 		$this->db->query('UPDATE ?# SET ?a WHERE ?# = ?', static::$tableName, $this->data, static::$pKey, $this->getID());
+
+
+		if (!empty($this->lang_key['lang_id']) && !empty($this->lang_data)){
+			$this->db->query('INSERT INTO ?# (?#) VALUES (?a) ON DUPLICATE KEY UPDATE ?a',
+				$this->get_lang_table(),
+				array_keys($this->lang_key + $this->lang_data),
+				array_values($this->lang_key + $this->lang_data),
+				$this->lang_data
+			);
+		}
+
 		return $this;
+	}
+
+	public function getLangs()
+	{
+		$list = $this->db->select('SELECT ?#, ?# AS ARRAY_KEY FROM ?# WHERE ?# = ?d',
+			array_keys($this->lang_field),
+			array_keys($this->lang_key)[1],
+			$this->get_lang_table(),
+			array_keys($this->lang_key)[0],
+			$this->data['id']
+		);
+		foreach ($list as $k => $row){
+			foreach ($row as $key => $val){
+				$list[$k][$key] = !empty($this->lang_field[$key]['decode']) ? $this->lang_field[$key]['decode']($val) : $val;
+			}
+		}
+		return $list;
 	}
 
 	static public function getTableName()
@@ -146,6 +207,20 @@ abstract class baseTableModel
 	static public function me()
 	{
 		return get_called_class();
+	}
+
+	protected function get_lang_table()
+	{
+		return static::getTableName().$this->lang_table;
+	}
+
+
+	static public function remove($item = false)
+	{
+		if(!$item) $item = $this;
+		$item->db->query('DELETE FROM ?# WHERE ?# = ?d', static::$tableName, static::$pKey, $item->id);
+		unset($item);
+		return true;
 	}
 }
 

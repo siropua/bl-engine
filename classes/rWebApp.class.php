@@ -204,6 +204,12 @@ class rWebApp extends rApplication{
 			foreach($_SESSION['saved_vars'] as $n=>$v) $this->assign($n, $v);
 			unset($_SESSION['saved_vars']);
 		}
+
+		if(!session_id()){
+		    session_regenerate_id();
+		}
+
+
 		@session_write_close();
 
 		if($this->user->authed() && !$this->isAJAXHit())

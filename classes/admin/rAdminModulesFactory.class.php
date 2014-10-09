@@ -94,6 +94,9 @@ class rAdminModulesFactory extends iModulesFactory{
 			$moduleInfo['json_url'] = ROOT_URL.'json/'.ADMIN_FOLDER.'/'.$s.'/'.$m.'/';
 
 			define('MODULE_PATH', $modulePath);
+
+
+			$moduleInfo['path'] = $modulePath;
 			
 
 			
