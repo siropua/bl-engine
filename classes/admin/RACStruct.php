@@ -349,10 +349,18 @@ class RACMenuWorker{
 
 			if(!empty($sv['icon'])) 
 				$localMenu[$sk]['icon'] = $localURL.$sk.'/'.$sv['icon'];
+
+			if(!empty($sv['font_icon'])) 
+				$localMenu[$sk]['font_icon'] = $sv['font_icon'];
+
+
+
 			if(!empty($sv['modules']))
 				foreach ($sv['modules'] as $mk => $mv) {
 					if(!empty($mv['icon']))
 						$localMenu[$sk]['modules'][$mk]['icon'] = $localURL.$sk.'/'.$mk.'/'.$mv['icon'];
+					if(!empty($mv['font_icon']))
+						$localMenu[$sk]['modules'][$mk]['font_icon'] = $mv['font_icon'];
 				}
 
 

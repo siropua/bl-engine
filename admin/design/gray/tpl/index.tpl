@@ -61,6 +61,8 @@
 {/if}
 {/foreach}
 
+<script src="{$ADMIN_DESIGN_URL}js/main.js"></script>
+
 
 {$_APP->getSetting('admin_site_head_area')}
 
@@ -104,10 +106,15 @@
 
 	<ul id="main-menu">
 		{foreach from=$_ADMIN_MENU item=sectionInfo key=sectionURL name=amfe}
-		<li class="root-level has-sub opened"> <a href="#"><i></i> <span>{$sectionInfo.name}</span></a>
-			<ul class="visible">{foreach from=$sectionInfo.modules item=moduleInfo key=moduleURL}
-				<li class=""><a href="{$moduleInfo.url}"><i><img src="{$moduleInfo.icon}" width="16" alt="" /></i> <span>{$moduleInfo.name}</span></a></li>
-			{/foreach}</ul>
+		<li class="root-level has-sub opened"> <a href="#"><i class="{if $sectionInfo.font_icon}{$sectionInfo.font_icon}{/if}"></i> <span>{$sectionInfo.name}</span></a>
+			<ul class="visible">
+				{foreach from=$sectionInfo.modules item=moduleInfo key=moduleURL}
+					<li class="">
+						<a href="{$moduleInfo.url}"><i class="{if $moduleInfo.font_icon}{$moduleInfo.font_icon}{/if}">{if $moduleInfo.icon}<img src="{$moduleInfo.icon}" width="16" alt="" />{/if}</i> 
+						<span>{$moduleInfo.name}</span></a>
+					</li>
+				{/foreach}
+			</ul>
 		{/foreach}</li>
 	</ul>
 	<div style="clear: both;"></div>

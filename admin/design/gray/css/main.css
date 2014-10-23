@@ -229,6 +229,18 @@ display: table;
 	color: #fff;
 }
 
+.admin-container .sidebar-menu #main-menu li i {
+	position: relative;
+	font-size: 15px;
+	margin-right: 5px;
+}
+
+
+.admin-container .sidebar-menu #main-menu li a i {
+	top: 1px;
+	display: inline-block;
+}
+
 
 
 /** CONTENT **/
