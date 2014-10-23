@@ -151,6 +151,20 @@ abstract class baseTableModel
 		return $this;
 	}
 
+	public function setFields($data, $instantSave = false)
+	{
+		if(!empty($data['lang_id'])){
+			// чтобы lang_id заполнялся гарантированно первым
+			$this->setFieldData('lang_id', $data['lang_id']);
+			unset($data['lang_id']);
+		}
+		foreach ($data as $field => $value) {
+			$this->setFieldData($field, $value);
+		}
+
+		if($instantSave) $this->save();
+	}
+
 	/**
 	* Сохраняет данные массива в базу
 	**/
@@ -171,7 +185,7 @@ abstract class baseTableModel
 		return $this;
 	}
 
-	public function getLangs()
+	public function getLangs($onlyLang = null)
 	{
 		$list = $this->db->select('SELECT ?#, ?# AS ARRAY_KEY FROM ?# WHERE ?# = ?d',
 			array_keys($this->lang_field),
@@ -185,6 +199,8 @@ abstract class baseTableModel
 				$list[$k][$key] = !empty($this->lang_field[$key]['decode']) ? $this->lang_field[$key]['decode']($val) : $val;
 			}
 		}
+
+		if($onlyLang) return @$list[$onlyLang];
 		return $list;
 	}
 
@@ -215,11 +231,11 @@ abstract class baseTableModel
 	}
 
 
-	static public function remove($item = false)
+	public function remove()
 	{
-		if(!$item) $item = $this;
-		$item->db->query('DELETE FROM ?# WHERE ?# = ?d', static::$tableName, static::$pKey, $item->id);
-		unset($item);
+
+		$this->db->query('DELETE FROM ?# WHERE ?# = ?d', static::$tableName, static::$pKey, $this->id);
+
 		return true;
 	}
 }

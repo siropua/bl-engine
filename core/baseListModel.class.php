@@ -33,7 +33,8 @@ class baseListModel
 	{
 		$list = $this->db->select(
 			sprintf(
-				'SELECT * FROM ?#%s%s%s%s%s%s',
+				'SELECT %s FROM ?#%s%s%s%s%s%s',
+				!empty($conditions['fields']) ? ' '.$this->makeFieldsString($conditions['fields']) : '*',
 				!empty($conditions['join']) ? ' '.$this->makeJoinString($conditions['join']) : '',
 				!empty($conditions['where']) ? ' WHERE '.$this->makeWhereString($conditions['where']) : '',
 				!empty($conditions['group']) ? ' GROUP BY '.$this->makeGroupString($conditions['group']) : '',
@@ -44,6 +45,16 @@ class baseListModel
 			$this->getTableName()
 		);
 		return $list;
+	}
+
+	protected function makeFieldsString($param){
+		if (is_array($param)){
+			return implode(', ', $param);
+		}
+		if (is_string($param)){
+			return $param;
+		}
+		return false;
 	}
 
 	protected function makeJoinString($param){
@@ -105,6 +116,9 @@ class baseListModel
 			return implode(',', $param);
 		}
 		if (is_string($param)){
+			return $param;
+		}
+		if (is_numeric($param)){
 			return $param;
 		}
 		return false;

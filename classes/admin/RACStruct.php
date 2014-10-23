@@ -60,12 +60,14 @@ class RACStruct{
 
 			##### no config file ##
 			if(!file_exists($s.'/config.ini')) continue;
-			
-			/** section disabled **/
-			if(file_exists($s.'/disabled')) continue;
 
 			$conf = $this->_configReader->get($s.'/config.ini');
 			if(!$conf || !@$conf['name']) continue;
+			
+			/** section disabled **/
+			if(file_exists($s.'/.disabled')) $conf['disabled'] = 1;
+
+			
 
 			$this->_sections[basename($s)] = $conf;
 		}
@@ -166,11 +168,14 @@ class RACStruct{
 			##### no config file ##
 			if(!$config_file) continue;
 			
-			/** module disabled **/
-			if(file_exists($s.'/.disabled')) continue;
-
 			$conf = $this->_configReader->get($config_file, 'main');
 			if(!$conf || !@$conf['name']) continue;
+
+			/** module disabled **/
+			if(file_exists($s.'/.disabled')) $conf['disabled'] = 1;
+			// if(file_exists($s.'/.disabled')) continue;
+
+			
 			
 			$conf['rights'] = $this->_configReader->get($config_file, 'rights');
 
@@ -336,6 +341,7 @@ class RACMenuWorker{
 
 		$struct = new RACStruct(SITE_PATH.'/'.ADMIN_FOLDER);
 		$localMenu = $struct->getAllModules();
+
 
 		$menu = $globalMenu;
 

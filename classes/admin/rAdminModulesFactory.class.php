@@ -9,6 +9,16 @@ if(!defined('ADMIN_JS_URL'))
 if(!defined('ADMIN_DESIGN'))
 	define('ADMIN_DESIGN', ADMIN_URL.'templates/');
 
+if(!defined('ADMIN_DESIGN_THEME'))
+	define('ADMIN_DESIGN_THEME', 'gray');
+
+if(!defined('ADMIN_DESIGN_URL'))
+	define('ADMIN_DESIGN_URL', ROOT_URL.ENGINE_FOLDER.'/admin/design/'.ADMIN_DESIGN_THEME.'/');
+
+if(!defined('ADMIN_DESIGN_PATH'))
+	define('ADMIN_DESIGN_PATH', ENGINE_PATH.'/admin/design/'.ADMIN_DESIGN_THEME);
+
+
 class rAdminModulesFactory extends iModulesFactory{
 
 
@@ -18,16 +28,19 @@ class rAdminModulesFactory extends iModulesFactory{
 		$app->tpl->template_dir = ENGINE_PATH.'/admin/';
 		$this->menu = $this->getUserMenu();
 
+		// $app->dump($this->menu); exit;
+
 		$this->app->assign('_ADMIN_MENU', $this->menu);
 
 		
 		$this->app->assign('ADMIN_URL', ADMIN_URL);
+		$this->app->assign('ADMIN_DESIGN_URL', ADMIN_DESIGN_URL);
 		$this->app->assign('ADMIN_DESIGN', ADMIN_DESIGN);
 		$this->app->assign('ADMIN_IMG', ADMIN_DESIGN.'img/');
 		$this->app->setStdTemplatesFolder(ENGINE_PATH.'/admin/');
 		$this->app->assign('ADMIN_JS', ADMIN_JS_URL);
 
-		$this->app->setContainer(ENGINE_PATH.'/admin/index.tpl');
+		$this->app->setContainer(ADMIN_DESIGN_PATH.'/tpl/index.tpl');
 	}
 
 
