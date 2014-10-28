@@ -163,6 +163,8 @@ abstract class baseTableModel
 		}
 
 		if($instantSave) $this->save();
+		
+		return $this;
 	}
 
 	/**
