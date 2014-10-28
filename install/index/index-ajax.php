@@ -9,11 +9,35 @@ include_once ENGINE_PATH.'/init.php';
 function echoJSON($data, $status = 200, $error_msg = '')
 {
 	if(!headers_sent()) header('Content-Type: application/json');
-	echo json_encode(array(
+
+	$userInfo = array();
+	$_APP = rMyApp::getInstance();
+	$user = $_APP->user;
+	if($user->authed()) $userInfo = array(
+		'user_id' => $user->getID(),
+		'user_login' => $user->email,
+		'locale' => array_flip($_APP->lang->getIDs())[$user->locale],
+	);
+
+
+
+	$r = json_encode(array(
 			'status' => $status,
 			'error_msg' => $error_msg,
-			'data' => $data
+			'data' => $data,
+			'user_info' => $userInfo,
 		));
+
+
+		if(!empty($_POST)){
+		    file_put_contents(ENGINE_PATH.'/var/logs/api-post.log', '['.date('m.d H:i:s').'] Resp: '.print_r($r, 1)."\n", FILE_APPEND);
+		}else{
+		    file_put_contents(ENGINE_PATH.'/var/logs/api-get.log', 'Response: '.print_r($r, 1)."\n", FILE_APPEND);
+		}
+
+
+	echo $r;
+
 	exit;
 }
 
@@ -25,6 +49,7 @@ try{
 
 
 	$_APP = rMyApp::getInstance();
+	$_APP->addBaseClass('rMyMultilang', 'ml');
 	$_APP->setForceAJAXHit();
 	$_isJSONMode = $_APP->testPath('json', 1);
 	define('IS_JSON_MODE', $_isJSONMode);
@@ -133,7 +158,11 @@ try{
 	
 	if($_isJSONMode){
 		// режим JSON
-		echoJSON($module->$_MODULE_METHOD());
+		$toEcho = $module->$_MODULE_METHOD();
+		
+
+
+		echoJSON($toEcho);
 	}else{
 		// режим ХУЙЗНАЙТСОН
 		$result = $module->$_MODULE_METHOD();
@@ -157,6 +186,10 @@ try{
 	echoJSON(false, 401, $e->getMessage());
 
 }catch(JSONException $e){
+
+
+
+
 	echoJSON(false, 503, $e->getMessage());
 }catch(dbException $e){
 	$info = $e->getInfo();

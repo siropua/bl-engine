@@ -13,6 +13,7 @@ try{
 	
 
 	$_APP = rMyApp::getInstance();
+	$_APP->addBaseClass('rMyMultilang', 'ml');
 
 	// логинимся
 	if(!empty($_POST['login2site'])){
@@ -65,6 +66,7 @@ try{
 }catch(rNotFound $e){
 	//if(!$module) $module = new rMySite($_APP);
 
+	$_APP->setContainer('index.tpl');
 	$_APP->notFound();
 
 	
