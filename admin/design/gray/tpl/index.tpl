@@ -145,7 +145,7 @@
 	{if $_M.tabs}
 			<ul class="nav nav-tabs">
 			{foreach from=$_M.tabs item=t key=t_url}
-			<li{if $t.active} class="active"{/if}><a href="{$_M.url}{$t_url}/">{if $t.icon_name}<i class="icon-{$t.icon_name}"></i> {elseif $t.icon}<img src="{$_M.res_url}{$t.icon}"> {/if}{$t.name}</a></li>
+			<li{if $t.active} class="active"{/if}><a href="{$_M.url}{$t_url}/">{if $t.font_icon}<i class="{$t.font_icon}"></i> {elseif $t.icon}<img src="{$_M.res_url}{$t.icon}"> {/if}{$t.name}</a></li>
 			{/foreach}
 			</ul>
 		{/if}
