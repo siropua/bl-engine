@@ -42,10 +42,6 @@
 	{/if}
 	var pageLoading = 'Загрузка...';
 
-	function NoElasticScroll(e){
-  		//e.preventDefault(); 
-	}
-
 
 </script>
 

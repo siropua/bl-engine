@@ -231,6 +231,22 @@ abstract class baseTableModel
 	{
 		return static::getTableName().$this->lang_table;
 	}
+	
+	public function inc($field, $cnt = 1)
+	{
+	    $this->db->query('UPDATE ?# SET ?# = ?# + ? WHERE ?# = ?d',
+		static::$tableName, $field, $field, $cnt, static::$pKey, $this->id
+	    );
+	    $this->data[$field] = $this->db->selectCell('SELECT ?# FROM ?# WHERE ?# = ?d',
+		$field, static::$tableName, static::$pKey, $this->id
+	    );
+	    return $this;
+	}
+	
+	public function dec($field, $cnt = 1)
+	{
+	    return $this->inc($field, -$cnt);
+	}
 
 
 	public function remove()
