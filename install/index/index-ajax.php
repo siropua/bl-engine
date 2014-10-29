@@ -72,6 +72,8 @@ try{
 		if($_APP->path(6)){
 			if(method_exists($module, 'Run_'.$_APP->path(6))){
 				$_MODULE_METHOD = 'Run_'.$_APP->path(6);
+			}elseif(method_exists($module, 'RunAJAX_'.$_APP->path(6))){
+			    $_MODULE_METHOD = 'RunAJAX_'.$_APP->path(6);
 			}
 		}elseif (method_exists($module, 'RunAJAX_'.$_APP->path(5))) {
 			$_MODULE_METHOD = 'RunAJAX_'.$_APP->path(5);

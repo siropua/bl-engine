@@ -189,6 +189,7 @@ class rAdminModulesFactory extends iModulesFactory{
 		$s = $this->app->url->path(3); // section
 		$m = $this->app->url->path(4); // module
 		$f = $this->app->url->path(5);
+		$method = $this->app->url->path(6);
 		if(!$f) $f = $m;
 
 		if(!$this->app->user->can('admin/'.$s.'/'.$m)) 
