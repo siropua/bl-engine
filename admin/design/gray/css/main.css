@@ -250,7 +250,7 @@ display: table;
 	float: left;
 	width: 100%;
 	padding: 20px;
-	z-index: 2;
+	/*z-index: 2;*/
 	background: #fff;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
