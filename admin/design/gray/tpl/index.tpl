@@ -102,8 +102,8 @@
 
 	<ul id="main-menu">
 		{foreach from=$_ADMIN_MENU item=sectionInfo key=sectionURL name=amfe}
-		<li class="root-level has-sub opened"> <a href="#"><i class="{if $sectionInfo.font_icon}{$sectionInfo.font_icon}{/if}"></i> <span>{$sectionInfo.name}</span></a>
-			<ul class="visible">
+		<li class="root-level has-sub{if !$sectionInfo.closed} opened{/if}"> <a href="#"><i class="{if $sectionInfo.font_icon}{$sectionInfo.font_icon}{/if}"></i> <span>{$sectionInfo.name}</span></a>
+			<ul class="{if !$sectionInfo.closed}visible{/if}">
 				{foreach from=$sectionInfo.modules item=moduleInfo key=moduleURL}
 					<li class="">
 						<a href="{$moduleInfo.url}"><i class="{if $moduleInfo.font_icon}{$moduleInfo.font_icon}{/if}">{if $moduleInfo.icon}<img src="{$moduleInfo.icon}" width="16" alt="" />{/if}</i> 
