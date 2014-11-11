@@ -12,7 +12,7 @@ body {
 	right: 0;
 	top: 0;
 	bottom: 0;
-	padding-left: 280px;
+	padding-left: 230px;
 	width: 100%;
 }
 
@@ -32,7 +32,7 @@ display: table;
 
 .admin-container .sidebar-menu {
 	position: absolute;
-	width: 280px;
+	width: 230px;
 	top: 0;
 	left: 0;
 	bottom: 0;

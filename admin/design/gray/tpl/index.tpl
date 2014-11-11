@@ -121,6 +121,7 @@
 	
 	<header class="admin-top">
 		<ol class="breadcrumb breadcrumb-3 pull-left">
+		  <li><a href="{$ROOT}">{$smarty.server.HTTP_HOST}</a></li>
 		  <li><a href="{$ADMIN_URL}">Admin</a></li>
 			{if $_BREADCRUMBS}
 			
