@@ -51,8 +51,13 @@ class module_admins extends rMyAdminModule
 
 		$this->assign('admin_data', $data);
 
+		$rmv = new RACMenuWorker;
+		$modules = $rmv->parseModules();
 
-		$this->app->assign('rights', array());
+
+
+
+		$this->app->assign('rights', $modules);
 
 		$this->app->assign('editMode', true);
 		$this->app->setTemplate('adminForm.tpl');
