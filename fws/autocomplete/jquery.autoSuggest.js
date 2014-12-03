@@ -238,7 +238,7 @@
                                 timeout = setTimeout(function(){ keyChange(); }, opts.keyDelay);
                             }
                             break;
-                        case 9:  // tab
+                        case 9: // tab
                             if(opts.canGenerateNewSelections){
                                 tab_press = true;
                                 var i_input = input.val().replace(/(,)/g, "");
@@ -276,12 +276,12 @@
                             results_holder.hide();
                             break;
                     }
-                }).keyup(function(e) {
+                }).keypress(function(e) {
                     // track last key pressed
                     lastKeyPressCode = e.keyCode;
                     first_focus = false;
-                    switch(e.keyCode) {
-                        case 188:  // comm
+                    switch(e.charCode) {
+                        case 44:  // comm
                             if(opts.canGenerateNewSelections){
                                 tab_press = true;
                                 var i_input = input.val().replace(/(,)/g, "");
