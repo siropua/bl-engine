@@ -57,7 +57,7 @@ abstract class baseTableModel
 		return new static($data);
 	}
 
-	static public function create($data, $doGetAfterInsert = false)
+	static public function create($data, $doGetAfterInsert = false, $updateIfExists = false)
 	{
 		$insData = array();
 
@@ -71,7 +71,12 @@ abstract class baseTableModel
 			}
 		}
 
-		$newID = DB::getInstance()->query('INSERT INTO ?# SET ?a', static::$tableName, $insData);
+		if($updateIfExists){
+			$newID = DB::getInstance()->query('INSERT INTO ?# SET ?a ON DUPLICATE KEY UPDATE ?a', static::$tableName, $insData, $insData);
+		}else{
+			$newID = DB::getInstance()->query('INSERT INTO ?# SET ?a', static::$tableName, $insData);	
+		}
+		
 
 		$item = false;
 
