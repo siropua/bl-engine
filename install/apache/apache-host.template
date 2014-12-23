@@ -1,0 +1,7 @@
+<VirtualHost *:80>
+    ServerAdmin admin@_SITE_NAME_.local
+    DocumentRoot "_SITE_DIR_"
+    ServerName _SITE_NAME_.local
+    ErrorLog "/private/var/log/apache2/_SITE_NAME_-error_log"
+    CustomLog "/private/var/log/apache2/_SITE_NAME_-access_log" common
+</VirtualHost>

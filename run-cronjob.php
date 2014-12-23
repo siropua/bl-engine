@@ -36,7 +36,7 @@ if(!method_exists($className, $method)){
 }
 
 
-$class = new $className(new rMyCLIApp);
+$class = new $className(rMyCLIApp::getInstance());
 $class->$method();
 
 echo "\n";

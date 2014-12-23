@@ -76,7 +76,6 @@ abstract class baseTableModel
 		}else{
 			$newID = DB::getInstance()->query('INSERT INTO ?# SET ?a', static::$tableName, $insData);	
 		}
-		
 
 		$item = false;
 
