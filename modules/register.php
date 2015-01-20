@@ -34,7 +34,8 @@ class module_register extends rMyModule{
 			return false;
 		}
 
-		if($this->app->user->getByLogin($d['login'])){
+		$user = new \rMyUser($this->app->db);
+		if($user->getByLogin($d['login'])){
 			$this->app->addMessage($this->app->lang->error_login_exists, APPMSG_ERROR);
 			return false;
 		}

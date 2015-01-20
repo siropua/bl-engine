@@ -40,6 +40,7 @@ try{
 	require_once 'core/baseListModel.class.php';
 	require_once 'core/baseTreeModel.class.php';
 	require_once 'core/router.class.php';
+	require_once 'core/dates.class.php';
 	
 
 
@@ -96,6 +97,7 @@ try{
 	});
 	
 
+
 }catch(dbException $e){
 	header("Content-Type: text/html; charset=UTF-8");
 	$info = $e->getInfo();
@@ -103,51 +105,9 @@ try{
 }
 
 
-
-
-
-$days_names=array(-2=>'позавчера', -1=>"вчера", 0=>"сегодня", 1=>"завтра", 2=>"послезавтра");
-
-$monthNames=array(1=>"января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря");
-
-$shortMonthNames=array(1=>"янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек");
-
-$weekNames=array("Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье");
-
-$shortWeekNames=array("Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс");
-
-
 function formatDateTime($date = 0, $params = array())
 {
-	global $days_names, $monthNames, $shortMonthNames, $weekNames, $shortWeekNames;
-	
-	$date=(int)$date;
-	if(!$date)$date=time();
-	$date_str = date("j n Y", $date);
-	list($dD, $dM, $dY)=explode(" ", $date_str);
-	list($curD, $curM, $curY) = explode(" ", date("j n Y"));
-
-	$time_str = date("H:i".(@$params['show_seconds'] ? ":s":""), $date);
-	
-	$days = (mktime(0, 0, 0, $dM, $dD, $dY) - mktime(0, 0, 0, $curM, $curD, $curY)) / (60*60*24) ;
-	if(abs($days)<3)
-	{
-		return $days_names[$days].", $time_str";
-	}
-
-	$ret="";
-	
-	if(@!$params['hide_dayname'])
-		$ret = $shortWeekNames[date('w', $date)].", ";
-	$ret .= $dD.' '.$monthNames[$dM];
-	
-	if($dY != $curY)
-		$ret .= ' '.$dY;
-	
-	$ret .= ', '.$time_str;
-
-	return trim($ret);
-
+	return ble\Dates::getInstance()->formatDateTime($date, $params);
 }
 
 function make_get_string($url, $var, $val = null){
