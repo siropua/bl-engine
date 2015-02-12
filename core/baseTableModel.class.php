@@ -149,7 +149,6 @@ abstract class baseTableModel
 				'lang_id' => $val
 			);
 		}
-
 		if($instantSave) $this->save();
 
 		return $this;
