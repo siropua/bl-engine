@@ -12,7 +12,7 @@ body {
 	right: 0;
 	top: 0;
 	bottom: 0;
-	padding-left: 280px;
+	padding-left: 240px;
 	width: 100%;
 }
 
@@ -32,7 +32,7 @@ display: table;
 
 .admin-container .sidebar-menu {
 	position: absolute;
-	width: 280px;
+	width: 240px;
 	top: 0;
 	left: 0;
 	bottom: 0;
@@ -121,6 +121,10 @@ display: table;
 .admin-container .sidebar-menu .logo-env a>h1 {
 	margin-top: 0;
 	font-weight: normal;
+	font-size: 28px;
+	white-space: nowrap;
+	font-family: 'Open Sans', sans-serif;
+	
 }
 
 
@@ -148,7 +152,7 @@ display: table;
 .admin-container .sidebar-menu #main-menu li a {
 	position: relative;
 	display: block;
-	padding: 10px 20px;
+	padding: 10px 15px;
 	color: #aaabae;
 	z-index: 2;
 	-moz-transition: color 250ms ease-in-out,background-color 250ms ease-in-out;
@@ -221,7 +225,7 @@ display: table;
 
 .admin-container .sidebar-menu #main-menu li ul>li>a {
 	background-color: #2b303a;
-	padding-left: 40px;
+	padding-left: 30px;
 }
 
 .admin-container .sidebar-menu #main-menu li.active>a {
