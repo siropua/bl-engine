@@ -461,6 +461,11 @@ class rWebApp extends rApplication{
 		$this->assign('_APPPAGE_TEMPLATE', $this->templateFile); 
 	}
 
+	public function getTemplate()
+	{
+	    return $this->templateFile;
+	}
+
 	/**
 	* Проверяет, есть ли шаблон с заданным именем (расширение .tpl добавляется автоматически при надобности).
 	* Если есть - устанавливает его и возвращает TRUE. Иначе просто возвращает FALSE

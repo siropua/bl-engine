@@ -7,7 +7,7 @@ class rMyAuthUser{
 		if(empty($loginData['login']) || !preg_match(LOGIN_PREG, $loginData['login'])) return 'Login_fail';
 		if(empty($loginData['password'])) return 'Pass_fail';
 
-		$loginData['save_me'] = empty($loginData['save_me']) ? 0 : time() + 15552000;
+		$loginData['save_me'] = empty($loginData['save_me']) ? 0 : strtotime(date('Y-m-d').' next year');
 
 		$result = $app->user->login($loginData['login'], $loginData['password'], $loginData['save_me']);
 

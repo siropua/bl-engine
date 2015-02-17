@@ -15,18 +15,26 @@ class baseListModel
 {
 
 	protected $baseModel;
+	protected $className;
 	protected $db;
 	
 	public function __construct($baseModel)
 	{
 		$this->baseModel = $baseModel;
+		$this->className = chr(92).$this->baseModel;
 		$this->db = DB::getInstance();
 	}
 
 	public function getTableName()
 	{
-		$className = '\\'.$this->baseModel;
+		$className = $this->className;
 		return $className::getTableName();
+	}
+
+	public function getPKey()
+	{
+		$className = $this->className;
+		return $className::getPKey();
 	}
 
 	public function getAsArray($conditions = false)
@@ -49,6 +57,11 @@ class baseListModel
 
 	protected function makeFieldsString($param){
 		if (is_array($param)){
+			foreach ($param as $key => $val){
+				if (is_string($key)){
+					$param[$key] = sprintf('%s as %s', $val, $key);
+				}
+			}
 			return implode(', ', $param);
 		}
 		if (is_string($param)){
@@ -126,14 +139,12 @@ class baseListModel
 
 	public function get($conditions = false)
 	{
-		$className = '\\'.$this->baseModel;
 		$list = $this->getAsArray($conditions);
-		return baseListModelGet::ret($className, $list);
+		return baseListModelGet::ret($this->className, $list);
 	}
 
 	public function remove($id)
 	{
-		$className = '\\'.$this->baseModel;
-		return $this->db->query('DELETE FROM ?# WHERE ?# = ?', $className::getTableName(), $className::getPKey(), $id);
+		return $this->db->query('DELETE FROM ?# WHERE ?# = ?', $this->getTableName(), $this->getPKey(), $id);
 	}
 }
