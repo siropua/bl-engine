@@ -80,7 +80,7 @@
 		</div>
 		
 					
-		<!-- logo collapse icon -->	
+		<!-- logo collapse icon -->
 		<div class="sidebar-collapse">
 			<a href="#" class="sidebar-collapse-icon with-animation">
 				<i class="fa fa-bars"></i>
@@ -89,12 +89,13 @@
 		
 								
 		
-		<!-- open/close menu icon  -->
+		<!-- open/close menu icon -->
 		<div class="sidebar-mobile-menu visible-xs">
 			<a href="#" class="with-animation">
 				<i class="fa fa-bars"></i>
 			</a>
 		</div>
+		<!-- -->
 		
 	</header>
 
