@@ -49,14 +49,46 @@ abstract class baseTableModel
 		return new static($data);
 	}
 
-	static public function get($id)
+	/**
+	* Конструирует объект по primary-key (хотя можно и по составному)
+
+	* @var $id int|string|array - если int или string то значение единичного ключа. Если массив - набор field => value
+	* @var $key string|null если задано, то имя ключа, по которому высылается
+	* @return baseTableModel|false либо созданный объект, либо false, если такой строки не найдено
+	**/
+	static public function get($id, $key = null)
 	{
-		$data = DB::getInstance()->selectRow('SELECT * FROM ?# WHERE ?# = ?', static::$tableName, static::$pKey, $id);
+		$db = DB::getInstance();
+
+		if(is_array($id))
+		{
+			// ключ составной, выбираем по нескольким полям!
+			
+			$where = array();
+			foreach($id as $field => $value) $where[] = $db->escape($field)." = '".$db->escape($value)."'";
+
+			$data = $db->selectRow('SELECT * FROM ?# WHERE '.implode(' AND ', $where).' LIMIT 1', static::$tableName);
+
+		}else
+		{
+			if(!$key) $key = static::$pKey;
+			$data = $db->selectRow('SELECT * FROM ?# WHERE ?# = ? LIMIT 1', static::$tableName, $key, $id);
+		}
+
+		
 		if(!$data) return false;
 
 		return new static($data);
 	}
 
+	/**
+	* Создает строчку в базе и создает из неё объект
+
+	* @var $data array массив с данными. автоматически фильтруется
+	* @var $doGetAfterInsert bool надо ли принудительно сделать SELECT из таблицы после вставки, либо заполнить массив «предполагаемыми» данными
+	* @var $updateIfExists bool делать ли ON DUPLICATE KEY UPDATE
+	* @return baseTableModel|false либо созданный объект, либо false, если добавить строку не удалось
+	*/
 	static public function create($data, $doGetAfterInsert = false, $updateIfExists = false)
 	{
 		$insData = array();
