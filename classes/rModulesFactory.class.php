@@ -47,6 +47,7 @@ class rModulesFactory extends iModulesFactory{
 	**/
 	protected function get_module_at_dir($dir){
 		$moduleName = $this->rURL->path(1);
+
 		
 		if($moduleName == 'index') return false; // пока лучше не придумал
 
@@ -55,8 +56,12 @@ class rModulesFactory extends iModulesFactory{
 		if(is_dir($dir.'/'.$moduleName)){
 			if(($subModuleName = $this->rURL->path(2)) && file_exists($dir.'/'.$moduleName.'/'.$subModuleName.'.php')){
 
+
+
 				$fn = $dir.'/'.$moduleName.'/'.$subModuleName.'.php';
-				$moduleName = $moduleName.'_'.preg_replace('~[^a-z]~i', '', $subModuleName);
+				$moduleName = $moduleName.'_'.preg_replace('~[^a-z_-]~i', '', $subModuleName);
+
+				// echo $moduleName; exit;
 
 			}elseif(file_exists($dir.'/'.$moduleName.'/index.php')){
 				$fn = $dir.'/'.$moduleName.'/index.php';
@@ -74,7 +79,7 @@ class rModulesFactory extends iModulesFactory{
 		$moduleClass = 'module_'.$moduleName;
 		$moduleClass = str_replace('-', '_', $moduleClass);
 
-		if(!class_exists($moduleClass)) throw new Exception("Wrong module file");
+		if(!class_exists($moduleClass)) throw new Exception("Wrong module file (searching for $moduleClass)");
 		
 
 		return new $moduleClass($this->app);
