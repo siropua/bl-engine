@@ -237,11 +237,13 @@ class rUser{
 
 	public function authByToken($access_token)
 	{
-		$this->_data = $this->_db->selectRow($this->_selectString.' WHERE access_token = ?', $access_token);
+		$_id = $this->_db->selectCell('SELECT user_id FROM users_devices WHERE access_token = ?', $access_token);
+		if (!$_id){
+			return false;
+		}
 
-		if(!$this->_data) return false;
-
-		$this->_fetchUserData();
+		$this->getByID($_id);
+		$this->_data['access_token'] = $access_token;
 
 		$this->_authed = true;
 		$this->_auth_checked = true;

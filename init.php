@@ -113,7 +113,11 @@ function formatDateTime($date = 0, $params = array())
 function make_get_string($url, $var, $val = null){
 	$path = explode('?', $url);
 	if (!empty($path[1])){
-		$path[1] = preg_replace('/'.$var.'(=[^&]*)?/', $var.(!empty($val) ? '='.$val : ''), $path[1]);
+		if (preg_match('/'.$var.'(=[^&]*)?/', $path[1])){
+			$path[1] = preg_replace('/'.$var.'(=[^&]*)?/', $var.(!empty($val) ? '='.$val : ''), $path[1]);
+		}else{
+			$path[1] .= '&'.$var.(!empty($val) ? '='.$val : '');
+		}
 		return $path[0].'?'.$path[1];
 	}
 	return $url.'?'.$var.'='.$val;
