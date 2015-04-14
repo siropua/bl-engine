@@ -186,6 +186,17 @@ abstract class baseTableModel
 		return $this;
 	}
 
+	/**
+	 * Alias for setFieldData method.
+	 * @param string  $key         Field name
+	 * @param mixed  $val         Field value
+	 * @param boolean $instantSave Instant save to database (or you must call save() method at and instead)
+	 */
+	public function setField($key, $val, $instantSave = false)
+	{
+		return $this->setFieldData($key, $val, $instantSave);
+	}
+
 	public function setFields($data, $instantSave = false)
 	{
 		if(!empty($data['lang_id'])){
