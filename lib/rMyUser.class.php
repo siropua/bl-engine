@@ -56,26 +56,5 @@ function getInfo(){
  }
   
   
- 
- // function _getUserDir()
- // {
- //     $dir = ceil($this->_data['id']/1000).'/';
- //     $dir .= $this->_data['id'];
- //     return $dir;
- // }
- 
- 
- // function _fetchUserData(){
- //  if(!parent::_fetchUserData()) return false;
- //  $this->_data['dataURL'] = $this->getUserURL();
- //    if(!empty($this->_data['userpic'])) {
-
- //   $this->_data['userpic_100'] = $this->getUserURL('img').'/thumb_'.$this->_data['userpic'];
- //   $this->_data['userpic_50'] = $this->getUserURL('img').'/upic_'.$this->_data['userpic'];
- //   $this->_data['userpic'] = $this->getUserURL('img').'/'.$this->_data['userpic'];
-   
- //  }
- //  return true;
- // }
 
 }

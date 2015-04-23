@@ -65,7 +65,7 @@ abstract class baseTableModel
 			// ключ составной, выбираем по нескольким полям!
 			
 			$where = array();
-			foreach($id as $field => $value) $where[] = $db->escape($field)." = '".$db->escape($value)."'";
+			foreach($id as $field => $value) $where[] = sprintf('%s=%s', $db->escape($field, true), $db->escape($value));
 
 			$data = $db->selectRow('SELECT * FROM ?# WHERE '.implode(' AND ', $where).' LIMIT 1', static::$tableName);
 
@@ -106,7 +106,7 @@ abstract class baseTableModel
 		if($updateIfExists){
 			$newID = DB::getInstance()->query('INSERT INTO ?# SET ?a ON DUPLICATE KEY UPDATE ?a', static::$tableName, $insData, $insData);
 		}else{
-			$newID = DB::getInstance()->query('INSERT INTO ?# SET ?a', static::$tableName, $insData);	
+			$newID = DB::getInstance()->query('INSERT INTO ?# SET ?a', static::$tableName, $insData);
 		}
 
 		$item = false;
