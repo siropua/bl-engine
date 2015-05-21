@@ -13,7 +13,6 @@ try{
 	
 
 	$_APP = rMyApp::getInstance();
-	$_APP->addBaseClass('rMyMultilang', 'ml');
 
 	// логинимся
 	if(!empty($_POST['login2site'])){
