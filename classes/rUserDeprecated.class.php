@@ -78,12 +78,12 @@ if(!defined('USERS_URL')) define('USERS_URL', ROOT_URL . 'users_data/');
  **/
 class rUser{
 
-	protected $db = null;
+	public $_db = null;
 	protected $_cookie_prefix = '';
 	protected $_authed = false;
 	protected $_auth_checked = false;
 	protected $_ID = 0;
-	protected $data = array();
+	protected $_data = array();
 	protected $_cookie_domain = '';
 	protected $_cookie_path = '/';
 	protected $_can = array();
@@ -103,14 +103,21 @@ class rUser{
 
 	/**
 	* Constructor
-	* @return rUser
+	* @param object $db_link Link to PEAR database object
+	* @param string $cookie_prefix Prefix for cookies
+	* @param mixed $autoauth if true, authenticate user after object creation
+	* @return void
 	*/
-	public function __construct()
-	{
-		$this->db = ble\DB::getInstance();
-		
+	function __construct($db_link, $cookie_prefix = 'user_', $autoauth = true){
+		$this->_db = $db_link;
+		$this->_cookie_prefix = $cookie_prefix;
 		$this->_resetState();
-		
+		if($autoauth){
+			$this->auth();
+		}else{
+			$this->_auth_checked = true;
+		}
+
 		if(defined('SITE_DOMAIN')){
 			$this->_cookie_domain = SITE_DOMAIN;
 		}
@@ -118,38 +125,53 @@ class rUser{
 		$this->_selectString = 'SELECT u.*, '.LOGIN_FIELD.' as login FROM users AS u ';
 	}
 
-	public function getCurToken()
-	{
-		@$hash = trim($_SESSION[$this->_cookie_prefix.'access_token']);
-
-		if(!$hash)
-		{
-			@$hash = trim($_COOKIE[$this->_cookie_prefix.'access_token']);
-		}
-
-		return $hash;
-	}
-
 	/**
 	* Auth user
 	* @return bool
 	*/
-	public function auth()
+	function auth()
 	{
+		global $_COOKIE, $_SESSION;
 
-		$hash = $this->getCurToken();
+		/** filling  uid и hash vars.
+		*
+		*/
+		@$this->_ID = (int)$_SESSION[$this->_cookie_prefix.'uid'];
+		@$hash = trim($_SESSION[$this->_cookie_prefix.'hash']);
 
-		if(!$hash || !$this->authByToken($hash))
+		if(!$this->_ID || !$hash)
+		{
+			@$this->_ID = (int)$_COOKIE[$this->_cookie_prefix.'uid'];
+			@$hash = trim($_COOKIE[$this->_cookie_prefix.'hash']);
+		};
+
+		if(!$this->_ID || !$hash)
 		{
 			$_authed = false;
 			$this->_auth_checked = true;
-			$this->_lastAuthError = 'No token ('.$hash.') found';
+			$this->_lastAuthError = 'No ID ('.$this->_ID.') or HASH ('.$hash.')';
 			return false;
 		}
 
+		/** no user */
+		if(!$this->getByID($this->_ID))
+		{
+			$_authed = false;
+			$this->_auth_checked = true;
+			$this->_lastAuthError = 'No user '.$this->_ID.' in database';
+			return false;
+		}
+
+		/** incorrect hash */
+		if($this->_data[PASS_FIELD] != $hash){
+			$this->_lastAuthError = 'Hash '.$this->_data[PASS_FIELD].' do not match'.$hash;
+			$_authed = false;
+			$this->_auth_checked = true;
+			return false;
+		}
 		
 		  /** user deleted */
-		if(!empty($this->data[DELETED_FLAG])){
+		if(!empty($this->_data[DELETED_FLAG])){
 				$this->_lastAuthError = 'User '.$this->_ID.' deleted';
 				$_authed = false;
 				$this->_auth_checked = true;
@@ -157,19 +179,21 @@ class rUser{
 		}
 		
 		/** user blocked */
-		if(!empty($this->data[USER_BLOCKED_FLAG])){
+		if(!empty($this->_data[USER_BLOCKED_FLAG])){
 				$this->_lastAuthError = 'User '.$this->_ID.' is blocked';
 				$_authed = false;
 				$this->_auth_checked = true;
 				return false;
 		}
 
-		$_SESSION[$this->_cookie_prefix.'access_token'] = $hash;
+		$_SESSION[$this->_cookie_prefix.'uid'] = $this->_ID;
+		$_SESSION[$this->_cookie_prefix.'hash'] = $hash;
 
 		$this->_auth_checked = true;
 		$this->_authed = true;
-		$this->_can = unserialize($this->data['rights']);
+		$this->_can = unserialize($this->_data['rights']);
 		return true;
+
 
 	}
 
@@ -180,9 +204,9 @@ class rUser{
 	* @param integer $save_time
 	* @return int see LOGIN_* defines to determine login result
 	*/
-	public function login($login, $password, $save_time = 0)
+	function login($login, $password, $save_time = 0)
 	{
-		
+		global $_SESSION, $_COOKIE;
 		$save_time = (int)$save_time;
 		$this->_resetState();
 		if(!preg_match(LOGIN_PREG, $login) || !$password)
@@ -195,93 +219,53 @@ class rUser{
 		$hashedPass = $this->hashPassword($password, $this->salt);		
 
 		
-		if($hashedPass != $this->data[PASS_FIELD])
+		if($hashedPass != $this->_data[PASS_FIELD])
 			return LOGIN_PASS_ERR;
 
-		if(DELETED_FLAG && !empty($this->data[DELETED_FLAG]))
+		if(DELETED_FLAG && !empty($this->_data[DELETED_FLAG]))
 			return LOGIN_NO_USER;
 		
-		if(USER_BLOCKED_FLAG && !empty($this->data[USER_BLOCKED_FLAG]))
+		if(USER_BLOCKED_FLAG && !empty($this->_data[USER_BLOCKED_FLAG]))
 			return LOGIN_BLOCKED_USER;
 
-		$this->_ID = (int)$this->data['id'];
+		$this->_ID = (int)$this->_data['id'];
 
 		$this->doLogin($save_time);
 
 		return LOGIN_OK;
 	}
 
-	/**
-	 * Возвращает строчку авторизации по токену.
-	 * При этом учитывается device_id
-	 * @param  string $access_token Токен, по которому искать пользователя
-	 * @return array               Инфа по токену
-	 */
-	public function getTokenInfo($access_token)
-	{
-		return $this->db->selectRow('SELECT * FROM users_devices WHERE access_token = ? AND device_id = ?', $access_token, $this->getDeviceID());
-	}
-
 	public function authByToken($access_token)
 	{
-		$token = $this->getTokenInfo($access_token);
-		if(!$token) return false;
+		$_id = $this->_db->selectCell('SELECT user_id FROM users_devices WHERE access_token = ?', $access_token);
+		if (!$_id){
+			return false;
+		}
 
-		$this->getByID($token['user_id']);
-		
+		$this->getByID($_id);
+		$this->_data['access_token'] = $access_token;
 
 		$this->_authed = true;
 		$this->_auth_checked = true;
-		$this->_can = unserialize($this->data['rights']);
+		$this->_can = unserialize($this->_data['rights']);
 
 		return true;
 	}
 
 	public function doLogin($save_time = 0)
 	{
-		$currentToken = $this->getCurToken();
-		$genNewToken = true;
+		$_COOKIE[$this->_cookie_prefix.'uid'] =
+			$_SESSION[$this->_cookie_prefix.'uid'] = $this->_data['id'];
+		$_COOKIE[$this->_cookie_prefix.'hash'] =
+			$_SESSION[$this->_cookie_prefix.'hash'] = $this->_data[PASS_FIELD];
 
-		if($currentToken)
-		{
-			$tokenInfo = $this->getTokenInfo($currentToken);
-			if($tokenInfo && ($tokenInfo['user_id'] == $this->id)) $genNewToken = false;
-		}
+			setcookie($this->_cookie_prefix.'uid', $this->_data['id'], $save_time, $this->_cookie_path);
+			setcookie($this->_cookie_prefix.'hash', $this->_data[PASS_FIELD], $save_time, $this->_cookie_path);
 
-		if($genNewToken)
-		{
-			$currentToken = $this->generateAccessToken();
-			$this->db->query('INSERT INTO users_devices SET ?a', array(
-				'user_id' => $this->id,
-				'access_token' => $currentToken,
-				'device_id' => $this->getDeviceID(),
-				'last_update' => time(),
-			));
-		}
-
-		
-		$_COOKIE[$this->_cookie_prefix.'access_token'] =
-			$_SESSION[$this->_cookie_prefix.'access_token'] = $currentToken;
-
-		
-			setcookie($this->_cookie_prefix.'access_token', $currentToken, $save_time, $this->_cookie_path);
-
-		$this->db->query('UPDATE ?# SET ip = ?, last_login = ? WHERE id = ?',
+		$this->_db->query('UPDATE ?# SET ip = ?, last_login = ? WHERE id = ?',
 			USERS_TABLE, $this->getIntIP(), time(), $this->_ID);
 
 		$this->auth();
-	}
-
-	/**
-	 * Возвращает хеш устройства, на котором сидит юзер
-	 * @return string md5-строка
-	 */
-	public function getDeviceID()
-	{
-		/**
-		* @todo сделать определение юзерского девайса. для мобилок это одно, для браузеров другое
-		 */
-		return md5('empty');
 	}
 
 	/**
@@ -290,8 +274,7 @@ class rUser{
 	* @param sting $salt
 	* @return mixed
 	*/
-	public function hashPassword($password, $salt = '')
-	{
+	function hashPassword($password, $salt = ''){
 		if(!$salt && defined('USER_FORCE_SALT_HASH') && USER_FORCE_SALT_HASH)
 			$salt = $this->salt;
 		switch(PASSWORD_HASH_METHOD){
@@ -312,7 +295,7 @@ class rUser{
 	**/
 	static public function generateAccessToken()
 	{
-		return sha1(uniqid(rand(1, 100000), true));
+		return sha1(uniqid(rand(1, 1000), true));
 	}
 	
 	/**
@@ -321,29 +304,29 @@ class rUser{
 	* @param bool $forceLogin
 	* @return void
 	*/
-	public function setPassword($password, $forceLogin = true){
+	function setPassword($password, $forceLogin = true){
 		$p = $this->hashPassword($password);
 		$l = $this->authed();
-		$this->setFields(array(PASS_FIELD => $p));
-		$this->db->query('DELETE FROM users_devices WHERE user_id = ?d', $this->id);
-		if($l && $forceLogin) $this->login($this->data[LOGIN_FIELD], $password);
+		$this->setFields(array(PASS_FIELD => $p, 'access_token' => $this->generateAccessToken()));
+		if($l && $forceLogin) $this->login($this->_data[LOGIN_FIELD], $password);
 	}
 
 	/**
 	* Clear session and cookie
 	* @return void
 	*/
-	public function logout()
+	function logout()
 	{
-		
-		$_COOKIE[$this->_cookie_prefix.'access_token'] =
-			$_SESSION[$this->_cookie_prefix.'access_token'] = '';
+		$_COOKIE[$this->_cookie_prefix.'uid'] =
+			$_SESSION[$this->_cookie_prefix.'uid'] = 0;
+		$_COOKIE[$this->_cookie_prefix.'hash'] =
+			$_SESSION[$this->_cookie_prefix.'hash'] = '';
 
 
-		
-		setcookie($this->_cookie_prefix.'access_token', '', 0, $this->_cookie_path);
+		setcookie($this->_cookie_prefix.'uid', 0, 0, $this->_cookie_path);
+		setcookie($this->_cookie_prefix.'hash', '', 0, $this->_cookie_path);
 
-		$this->db->query('DELETE FROM users_devices WHERE user_id = ?d', $this->id);
+		$this->setField('access_token', $this->generateAccessToken());
 
 		$this->_resetState();
 
@@ -354,9 +337,8 @@ class rUser{
 	* @param bool $force_reauth if true, user will be reauthed
 	* @return bool authed or not =)
 	*/
-	public function authed($force_reauth = false)
+	function authed($force_reauth = false)
 	{
-		
 		if(!$this->_auth_checked || $force_reauth)
 				$this->auth();
 		return $this->_authed;
@@ -368,11 +350,11 @@ class rUser{
 	* @param mixed $field
 	* @return mixed
 	*/
-	public function __get($field)
+	function __get($field)
 	{
 		/* if(!$this->authed())
 			return null; */
-		return @$this->data[$field];
+		return @$this->_data[$field];
 	}
 
 	/**
@@ -380,19 +362,19 @@ class rUser{
 	* @param mixed $action
 	* @return mixed
 	*/
-	public function can($action)
+	function can($action)
 	{
 		//if(!$this->authed())
 		//	return false;
-		if(empty($this->data['can'])) return false;
-		return (@$this->data['can'][$action] || @$this->data['can'][ACCEPT_ALL_RIGHT]) && (!@$this->data['can'][DENY_ALL_RIGHT]);
+		if(empty($this->_data['can'])) return false;
+		return (@$this->_data['can'][$action] || @$this->_data['can'][ACCEPT_ALL_RIGHT]) && (!@$this->_data['can'][DENY_ALL_RIGHT]);
 	}
 
 	/**
 	* cagetIDn()
 	* @return mixed
 	*/
-	public function getID()
+	function getID()
 	{
 		return $this->_ID;
 	}
@@ -402,9 +384,9 @@ class rUser{
 	* @param mixed $key
 	* @return mixed
 	*/
-	public function getData($key = null)
+	function getData($key = null)
 	{
-		return  $key == null ? $this->data : $this->data[$key];
+		return  $key == null ? $this->_data : $this->_data[$key];
 	}
 
 	/**
@@ -412,11 +394,11 @@ class rUser{
 	* @param mixed $new_pass
 	* @return bool
 	*/
-	public function changePassword($new_pass){
-		$this->db->query('UPDATE ?# SET password = ?, access_token = ? WHERE id = ?d', 
+	function changePassword($new_pass){
+		$this->_db->query('UPDATE ?# SET password = ?, access_token = ? WHERE id = ?d', 
 			USERS_TABLE, $this->hashPassword($new_pass), $this->generateAccessToken(), $this->_ID
 		);
-		if($this->_authed) $this->login($this->data[LOGIN_FIELD], $new_pass);
+		if($this->_authed) $this->login($this->_data[LOGIN_FIELD], $new_pass);
 		return true;
 	}
 
@@ -425,38 +407,38 @@ class rUser{
 	* @param sring $password
 	* @return bool
 	*/
-	public function checkPassword($password){
-		return $this->hashPassword($password, $this->salt) == $this->data[PASS_FIELD];
+	function checkPassword($password){
+		return $this->hashPassword($password, $this->salt) == $this->_data[PASS_FIELD];
 	}
 
 
 
 
 	/**
-	* rUser::fetchUserData()
+	* rUser::_fetchUserData()
 	* Fetching user data from database to _data array
 	* @return bool true if all ok, or false on any error.
 	*/
-	protected function fetchUserData()
+	function _fetchUserData()
 	{
 		
 		
-		if(!$this->data)
+		if(!$this->_data)
 		{
 			$this->_resetState();
 			return false;
 		}
 
-		@$this->data['can'] = unserialize($this->data['rights']);
-		$this->_ID = @(int)$this->data['id'];
+		@$this->_data['can'] = unserialize($this->_data['rights']);
+		$this->_ID = @(int)$this->_data['id'];
 
 		if(!$this->_ID) return false;
 		
 		
 		
-		if(!empty($this->data['userpic'])){
+		if(!empty($this->_data['userpic'])){
 			foreach($this->userpics as $key => $u){
-				$this->data['userpics'][$key] = $this->getURL($this->userpicFolder).$u['prefix'].$this->data['userpic'];
+				$this->_data['userpics'][$key] = $this->getURL($this->userpicFolder).$u['prefix'].$this->_data['userpic'];
 			}
 		}
 
@@ -467,20 +449,19 @@ class rUser{
 	* Reloads user data from database
 	* @return void
 	*/
-	public function reloadData()
+	function reloadData()
 	{
 		if(!$this->_ID) return false;
-		$this->data = $this->db->selectRow($this->_selectString.' WHERE ?# = ?d',
+		$this->_data = $this->_db->selectRow($this->_selectString.' WHERE ?# = ?d',
 			UID_FIELD, $this->_ID);
-		$this->fetchUserData();
+		$this->_fetchUserData();
 	}
 
 	/**
 	* Возвращает IP пользователя
 	* @return string IP of current user
 	*/
-    static public function getIP()
-    {
+    static public function getIP(){
         $ip = empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? @$_SERVER['REMOTE_ADDR'] : $_SERVER['HTTP_X_FORWARDED_FOR'];
         $ip = explode(',',$ip);
         return trim($ip[0]);
@@ -490,8 +471,7 @@ class rUser{
     * Возвращает IP пользователя в unsigned int формате. Подходит для MySQL функции INET_NTOA
     * @return int IP пользователя
     **/
-    static public function getIntIP()
-    {
+    static public function getIntIP(){
     	return sprintf("%u", ip2long(rUser::getIP()));
     }
 
@@ -503,13 +483,13 @@ class rUser{
 	* @param mixed $login
 	* @return mixed
 	*/
-	public function getByLogin($login)
+	function getByLogin($login)
 	{
-		$this->data = $this->db->selectRow($this->_selectString.' WHERE ?# = ?',
+		$this->_data = $this->_db->selectRow($this->_selectString.' WHERE ?# = ?',
 			LOGIN_FIELD, $login);
 
 
-		return $this->fetchUserData();
+		return $this->_fetchUserData();
 	}
 
 	/**
@@ -517,12 +497,12 @@ class rUser{
 	* @param mixed $id
 	* @return mixed
 	*/
-	public function getByID($id)
+	function getByID($id)
 	{
-		$this->data = $this->db->selectRow($this->_selectString.' WHERE u.?# = ?d',
+		$this->_data = $this->_db->selectRow($this->_selectString.' WHERE u.?# = ?d',
 			UID_FIELD, $id);
 
-		return $this->fetchUserData();
+		return $this->_fetchUserData();
 	}
 
 	/**
@@ -530,9 +510,8 @@ class rUser{
 	* @param mixed $field
 	* @return mixed
 	*/
-	public function getField($field)
-	{
-		return @$this->data[$field];
+	function getField($field){
+		return @$this->_data[$field];
 	}
 
 	/**
@@ -540,34 +519,30 @@ class rUser{
 	* @param mixed $array
 	* @return void
 	*/
-	public function setFields($array)
+	function setFields($array)
 	{
-		$res = $this->db->query('UPDATE ?# SET ?a WHERE id = ?', USERS_TABLE, $array, $this->_ID);
-		$this->data = $array + $this->data;
-
-		return $this;
+		$res = $this->_db->query('UPDATE ?# SET ?a WHERE id = ?', USERS_TABLE, $array, $this->_ID);
+		$this->_data = $array + $this->_data;
 	}
 
 	/**
 	* setField()
 	* @param mixed $name
 	* @param mixed $value
-	* @return rUser
+	* @return void
 	*/
-	public function setField($name, $value)
+	function setField($name, $value)
 	{
-		return $this->setFields(array($name => $value));
+		$this->setFields(array($name=>$value));
 	}
 
 	/**
 	* doHit()
 	* @return void
 	*/
-	public function doHit(){
-		if(!$this->authed()) return false; // только для залогиненных!
-
-		$this->db->query('UPDATE ?# SET hits = hits + 1, lastpage = ?, ip = ?, last_online = ?d WHERE id = ?d',
-			USERS_TABLE, @$_SERVER['REQUEST_URI'], $this->getIntIP(), time(), $this->_ID);
+	function doHit(){
+		$this->_db->query('UPDATE ?# SET hits = hits + 1, lastpage = ?, ip = ? WHERE id = ?d',
+			USERS_TABLE, @$_SERVER['REQUEST_URI'], $this->getIntIP(), $this->_ID);
 	}
 
 	/**
@@ -576,11 +551,11 @@ class rUser{
 	*/
 	public function getInfo(){
 		if(!$this->_ID) return array();
-		$info = $this->db->selectRow('SELECT * FROM users_info WHERE id = ?d', $this->_ID);
+		$info = $this->_db->selectRow('SELECT * FROM users_info WHERE id = ?d', $this->_ID);
 		
 		if(!$info){
-			$this->db->query('INSERT INTO users_info SET id = ?d', $this->_ID);
-			$info = $this->db->selectRow('SELECT * FROM users_info WHERE id = ?d', $this->_ID);
+			$this->_db->query('INSERT INTO users_info SET id = ?d', $this->_ID);
+			$info = $this->_db->selectRow('SELECT * FROM users_info WHERE id = ?d', $this->_ID);
 		}
 
 		list($info['byear'], $info['bmonth'], $info['bday']) = explode('-', @$info['birthday']);
@@ -594,7 +569,7 @@ class rUser{
 	* @param mixed $a
 	* @return void
 	*/
-	public function setInfo($a){
+	function setInfo($a){
 		if(!$this->_ID) return false;
 
 		if(!empty($a['byear']) || !empty($a['bmonth']) || !empty($a['byear'])){
@@ -602,19 +577,30 @@ class rUser{
 			unset($a['byear'], $a['bmonth'], $a['bday']);
 		}
 
-		$this->db->query('UPDATE users_info SET ?a WHERE id = ?d', $a, $this->_ID);
+		$this->_db->query('UPDATE users_info SET ?a WHERE id = ?d', $a, $this->_ID);
 	}	
 	
 	/**
 	* Reset all object vars
 	* @return void
 	*/
-	public function _resetState()
+	function _resetState()
 	{
-		$this->data = array();
+		$this->_data = array();
 		$this->_authed = false;
 		$this->_auth_checked = false;
 		$this->_ID = 0;
+	}
+
+	/**
+	* getUserDir() DEPRECATED
+	* @param string $sub_dir
+	* @return mixed
+	*/
+	function getUserPath($sub_dir = '')
+	{
+		return $this->getPath($sub_dir);
+
 	}
 
 	/**
@@ -622,7 +608,7 @@ class rUser{
 	* @param string $sub_dir
 	* @return mixed
 	*/
-	public function getPath($sub_dir = '')
+	function getPath($sub_dir = '')
 	{
 		/*if(!$this->_authed)
 			return false;*/
@@ -637,18 +623,27 @@ class rUser{
 				if(!is_writable(USERS_PATH))
 					return false;
 			}
-			$this->prepareDir($dir);
+			prepareDir($dir);
 		}
 		return realpath($dir);
 
 	}
 
 	/**
+	* getUserUrl() DEPRECATED
+	* @param string $sub_dir
+	* @return mixed
+	*/
+	function getUserURL($sub_dir = '')
+	{
+		return $this->getURL($sub_dir);
+	}
+	/**
 	* getURL()
 	* @param string $sub_dir
 	* @return mixed
 	*/
-	public function getURL($sub_dir = '')
+	function getURL($sub_dir = '')
 	{
 		return rtrim(USERS_URL . $this->_getUserDir() . '/' . $sub_dir, '/ ?').'/';
 	}
@@ -657,7 +652,7 @@ class rUser{
 	* По сути просто метод вложенности 
 	* @return mixed
 	*/
-	public function _getUserDir()
+	function _getUserDir()
 	{
 		$dir = 'u/'. ceil($this->getID() / 10000000).'/';
 		$dir .= ceil($this->getID() / 10000);
@@ -668,7 +663,7 @@ class rUser{
 	* getCookiePrefix()
 	* @return mixed
 	*/
-	public function getCookiePrefix(){
+	function getCookiePrefix(){
 		return $this->_cookie_prefix;
 	}
 	
@@ -679,7 +674,7 @@ class rUser{
 	* @return void
 	*/
 	public function addIntRating($rating, $firstVote){
-		$this->db->query('UPDATE ?# SET int_rating = int_rating + ?d{, int_rating_count = int_rating_count + ?d} WHERE id = ?d', 
+		$this->_db->query('UPDATE ?# SET int_rating = int_rating + ?d{, int_rating_count = int_rating_count + ?d} WHERE id = ?d', 
 		USERS_TABLE, $rating, $firstVote ? 1 : DBSIMPLE_SKIP, $this->_ID);
 	}
 	
@@ -691,7 +686,7 @@ class rUser{
 	* @return void
 	*/
 	public function addRating($rating, $firstVote){
-		$this->db->query('UPDATE ?# SET rating = rating + ?d{, rating_count = rating_count + ?d} WHERE id = ?d', 
+		$this->_db->query('UPDATE ?# SET rating = rating + ?d{, rating_count = rating_count + ?d} WHERE id = ?d', 
 			USERS_TABLE, $rating, $firstVote ? 1 : DBSIMPLE_SKIP, $this->_ID);
 	}
 	
@@ -724,7 +719,7 @@ class rUser{
 			return $this->createTempID();
 		}
 
-		$user = $this->db->selectRow('SELECT * FROM users_temp WHERE id = ?d', $tempID);
+		$user = $this->_db->selectRow('SELECT * FROM users_temp WHERE id = ?d', $tempID);
 
 		if(!$user || ($user['pass_key'] != $tempKey)) 
 			return $this->createTempID();
@@ -739,7 +734,7 @@ class rUser{
 	*/
 	protected function createTempID(){
 		$key = uniqid('', true);
-		$id = $this->db->query('INSERT INTO users_temp SET ?a', array(
+		$id = $this->_db->query('INSERT INTO users_temp SET ?a', array(
 			'pass_key' => $key,
 			'dateadd' => time()
 		));
@@ -785,7 +780,7 @@ class rUser{
 		
 		@unlink($pic);
 		
-		if(!empty($this->data['userpic'])){
+		if(!empty($this->_data['userpic'])){
 			// удаляем предыдущий
 			// а пока не удаляем, малоличо
 		}
@@ -803,25 +798,26 @@ class rUser{
 		return substr(uniqid('').rand(1,100), -10);
 	}
 	
-	/**
-	* prepareDir
-	* @param mixed $dir
-	* @return bool
-	*/
-	public function prepareDir($dir)
-	{
-		$dir = rtrim($dir, "/\\");
-		if (!is_dir($dir)) {
-			if (!$this->prepareDir(dirname($dir)))
-				return false;
-			if (@!mkdir($dir, 0777, true))
-				return false;
-			chmod($dir, 0777);
-		}
-		return true;
-	}
+	
 	
  
 }
 
 /************* </rUser> ***************************/
+/**
+* prepareDir
+* @param mixed $dir
+* @return bool
+*/
+function prepareDir($dir)
+{
+	$dir = rtrim($dir, "/\\");
+	if (!is_dir($dir)) {
+		if (!prepareDir(dirname($dir)))
+			return false;
+		if (@!mkdir($dir, 0777))
+			return false;
+		chmod($dir, 0777);
+	}
+	return true;
+}
