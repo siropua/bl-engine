@@ -19,7 +19,12 @@ class rAPIModulesFactory
 	 */
 	public function getModule()
 	{
-		
+		if(!$moduleInfo = $this->getModuleFile()) return false;
+
+		require_once $moduleInfo['file'];
+		if(!class_exists($moduleInfo['class_name'])) throw new Exception('Class '.$moduleInfo['class_name'].' not exists!');
+
+		return new $moduleInfo['class_name'];
 	}
 
 	/**
@@ -28,8 +33,8 @@ class rAPIModulesFactory
 	 */
 	public function getModuleFile()
 	{
-		if($file = $this->getModuleFileAtDir(SITE_PATH)) return $file;
-		return $this->getModuleFileAtDir(ENGINE_PATH);
+		if($file = $this->getModuleFileAtDir(SITE_PATH.'/api')) return $file;
+		return $this->getModuleFileAtDir(ENGINE_PATH.'/api');
 	}
 
 	protected function getModuleFileAtDir($dir)
@@ -46,21 +51,25 @@ class rAPIModulesFactory
 			// /version/dir/file or /version/dir/file/method/
 			$filename = $this->app->url->path(4) or 'index';
 			if(file_exists($dir.'/'.$this->app->url->path(3).'/'.$filename.'.php')) 
-				return $dir.'/'.$this->app->url->path(3).'/'.$filename.'.php';
+				return array(
+					'file' => $dir.'/'.$this->app->url->path(3).'/'.$filename.'.php',
+					'class_name' => preg_replace('~[^a-z0-9_]~i', '_', 'api_'.$this->app->path(3).(
+							$this->app->path(4) ? '_'.$this->app->path(4) : ''
+						)),
+				);
 		}else
 		{
 			// /version/file/ or /version/file/method/
 			if(file_exists($dir.'/'.$this->app->url->path(3).'.php'))
-				return $dir.'/'.$this->app->url->path(3).'.php';
+				return array(
+					'file' => $dir.'/'.$this->app->url->path(3).'.php',
+					'class_name' => preg_replace('~[^a-z0-9_]~i', '_', 'api_'.$this->app->path(3)),
+					);
 		}
 
-
-		if($this->app->url->path(5))
-		{
-
-		}
+		// ничего не нашли
+		return false;
 	}
-
 
 
 	/**

@@ -88,6 +88,7 @@ class rUser{
 	protected $_cookie_path = '/';
 	protected $_can = array();
 	protected $_lastAuthError = '';
+	protected $currentToken;
 
 	protected $_selectString = 'SELECT u.* FROM users AS u ';
 	
@@ -120,12 +121,16 @@ class rUser{
 
 	public function getCurToken()
 	{
+		if($this->currentToken) return $this->currentToken;
+		
 		@$hash = trim($_SESSION[$this->_cookie_prefix.'access_token']);
 
 		if(!$hash)
 		{
 			@$hash = trim($_COOKIE[$this->_cookie_prefix.'access_token']);
 		}
+
+		if(!$hash && !empty($_GET['access_token'])) $hash = trim($_GET['access_token']);
 
 		return $hash;
 	}
@@ -228,6 +233,8 @@ class rUser{
 		if(!$token) return false;
 
 		$this->getByID($token['user_id']);
+
+		$this->currentToken = $access_token;
 		
 
 		$this->_authed = true;
@@ -269,7 +276,11 @@ class rUser{
 		$this->db->query('UPDATE ?# SET ip = ?, last_login = ? WHERE id = ?',
 			USERS_TABLE, $this->getIntIP(), time(), $this->_ID);
 
+		$this->currentToken = $currentToken;
+
 		$this->auth();
+
+		return $currentToken;
 	}
 
 	/**
