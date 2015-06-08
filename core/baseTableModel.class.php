@@ -218,8 +218,12 @@ abstract class baseTableModel
 	**/
 	public function save()
 	{
-		$this->db->query('UPDATE ?# SET ?a WHERE ?# = ?', static::$tableName, $this->data, static::$pKey, $this->getID());
-
+		$this->db->query('UPDATE ?# SET ?a WHERE ?# = ?',
+			static::$tableName,
+			array_intersect_key($this->data, static::$fields),
+			static::$pKey,
+			$this->getID()
+		);
 
 		if (!empty($this->lang_key['lang_id']) && !empty($this->lang_data)){
 			$this->db->query('INSERT INTO ?# (?#) VALUES (?a) ON DUPLICATE KEY UPDATE ?a',
