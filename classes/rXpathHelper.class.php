@@ -53,7 +53,7 @@ class rXpathHelper
 
 	public function query($str, $parent = null)
 	{
-		return $this->xpath->query($str, $parent);
+		return $this->xpath->query($str, $parent ? $parent : $this->parentNode);
 	}
 
 	/**
@@ -70,6 +70,12 @@ class rXpathHelper
 	{
 		$this->setParent(NULL);
 		return $this;
+	}
+
+	public function getElement($query, $parent = NULL)
+	{
+		$result = $this->query($query, $parent);
+		return $result->length ? $result->items(0) : NULL;
 	}
 
 	public function getValue($query, $parent = NULL)
