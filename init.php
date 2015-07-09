@@ -6,7 +6,7 @@ require_once ENGINE_PATH.'/classes/rException.class.php';
 if(file_exists(SITE_PATH.'/lib/exceptions.php'))
 	include_once(SITE_PATH.'/lib/exceptions.php');
 
-
+if(file_exists(__DIR__.'/vendor/autoload.php')) require_once __DIR__.'/vendor/autoload.php';
 
 /**
 	перехват ошибок выполнения
