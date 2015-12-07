@@ -11,10 +11,13 @@ if(file_exists(__DIR__.'/vendor/autoload.php')) require_once __DIR__.'/vendor/au
 /**
 	перехват ошибок выполнения
 **/
-require_once('rlib/errorhook/Listener.php');
-require_once('rlib/errorhook/rSiteNotifier.php');
-$errorsHandler = new Debug_ErrorHook_Listener();
-$errorsHandler->addNotifier(new rSiteNotifier(rSiteNotifier::LOG_ALL));
+//require_once('rlib/errorhook/Listener.php');
+//require_once('rlib/errorhook/rSiteNotifier.php');
+//$errorsHandler = new Debug_ErrorHook_Listener();
+//$errorsHandler->addNotifier(new rSiteNotifier(rSiteNotifier::LOG_ALL));
+
+require_once(__DIR__.'/init/errorhook.php');
+
 
 /**
 	пагнали подключать все необходимое
