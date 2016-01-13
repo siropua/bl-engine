@@ -39,6 +39,12 @@ abstract class rSimpleApplication{
 	}
 
 
+	public function loadComponents()
+	{
+		return  true;
+	}
+
+
 	
 
 	/**
