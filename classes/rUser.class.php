@@ -90,6 +90,8 @@ class rUser{
 	protected $_lastAuthError = '';
 	protected $currentToken;
 
+	protected $tablePrefix = '';
+
 	protected $_selectString = 'SELECT u.* FROM users AS u ';
 	
 	protected $userpics = array(
@@ -116,7 +118,12 @@ class rUser{
 			$this->_cookie_domain = SITE_DOMAIN;
 		}
 
-		$this->_selectString = 'SELECT u.*, '.LOGIN_FIELD.' as login FROM users AS u ';
+		$this->_selectString = 'SELECT u.*, '.LOGIN_FIELD.' as login FROM '.$this->getTableName('users').' AS u ';
+	}
+
+	public function getTableName($table)
+	{
+		return '`'.$this->tablePrefix.$table.'`';
 	}
 
 	public function getCurToken()
@@ -224,7 +231,7 @@ class rUser{
 	 */
 	public function getTokenInfo($access_token)
 	{
-		return $this->db->selectRow('SELECT * FROM users_devices WHERE access_token = ? AND device_id = ?', $access_token, $this->getDeviceID());
+		return $this->db->selectRow('SELECT * FROM '.$this->getTableName('users_devices').' WHERE access_token = ? AND device_id = ?', $access_token, $this->getDeviceID());
 	}
 
 	public function authByToken($access_token)
@@ -258,7 +265,7 @@ class rUser{
 		if($genNewToken)
 		{
 			$currentToken = $this->generateAccessToken();
-			$this->db->query('INSERT INTO users_devices SET ?a', array(
+			$this->db->query('INSERT INTO '.$this->getTableName('users_devices').' SET ?a', array(
 				'user_id' => $this->id,
 				'access_token' => $currentToken,
 				'device_id' => $this->getDeviceID(),
@@ -336,7 +343,7 @@ class rUser{
 		$p = $this->hashPassword($password);
 		$l = $this->authed();
 		$this->setFields(array(PASS_FIELD => $p));
-		$this->db->query('DELETE FROM users_devices WHERE user_id = ?d', $this->id);
+		$this->db->query('DELETE FROM '.$this->getTableName('users_devices').' WHERE user_id = ?d', $this->id);
 		if($l && $forceLogin) $this->login($this->data[LOGIN_FIELD], $password);
 	}
 
@@ -354,7 +361,7 @@ class rUser{
 		
 		setcookie($this->_cookie_prefix.'access_token', '', 0, $this->_cookie_path);
 
-		$this->db->query('DELETE FROM users_devices WHERE user_id = ?d', $this->id);
+		$this->db->query('DELETE FROM '.$this->getTableName('users_devices').' WHERE user_id = ?d', $this->id);
 
 		$this->_resetState();
 
@@ -587,11 +594,11 @@ class rUser{
 	*/
 	public function getInfo(){
 		if(!$this->_ID) return array();
-		$info = $this->db->selectRow('SELECT * FROM users_info WHERE id = ?d', $this->_ID);
+		$info = $this->db->selectRow('SELECT * FROM '.$this->getTableName('users_info').' WHERE id = ?d', $this->_ID);
 		
 		if(!$info){
-			$this->db->query('INSERT INTO users_info SET id = ?d', $this->_ID);
-			$info = $this->db->selectRow('SELECT * FROM users_info WHERE id = ?d', $this->_ID);
+			$this->db->query('INSERT INTO '.$this->getTableName('users_info').' SET id = ?d', $this->_ID);
+			$info = $this->db->selectRow('SELECT * FROM '.$this->getTableName('users_info').' WHERE id = ?d', $this->_ID);
 		}
 
 		list($info['byear'], $info['bmonth'], $info['bday']) = explode('-', @$info['birthday']);
@@ -613,7 +620,7 @@ class rUser{
 			unset($a['byear'], $a['bmonth'], $a['bday']);
 		}
 
-		$this->db->query('UPDATE users_info SET ?a WHERE id = ?d', $a, $this->_ID);
+		$this->db->query('UPDATE '.$this->getTableName('users_info').' SET ?a WHERE id = ?d', $a, $this->_ID);
 	}	
 	
 	/**
@@ -735,7 +742,7 @@ class rUser{
 			return $this->createTempID();
 		}
 
-		$user = $this->db->selectRow('SELECT * FROM users_temp WHERE id = ?d', $tempID);
+		$user = $this->db->selectRow('SELECT * FROM '.$this->getTableName('users_temp').' WHERE id = ?d', $tempID);
 
 		if(!$user || ($user['pass_key'] != $tempKey)) 
 			return $this->createTempID();
@@ -750,7 +757,7 @@ class rUser{
 	*/
 	protected function createTempID(){
 		$key = uniqid('', true);
-		$id = $this->db->query('INSERT INTO users_temp SET ?a', array(
+		$id = $this->db->query('INSERT INTO '.$this->getTableName('users_temp').' SET ?a', array(
 			'pass_key' => $key,
 			'dateadd' => time()
 		));
