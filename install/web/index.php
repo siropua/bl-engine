@@ -37,6 +37,7 @@ try{
 		    exit;
 		}
 
+		require_once __DIR__.'/../../core/DB.class.php';
 		
 
 		require_once "rlib/rDBSimple.php";
@@ -86,29 +87,16 @@ try{
 			
 		}else{
 
-			
-
 			$user = new rMyUser(false);
 
 
 			/**
 			хуярим таблички!
-			**/
-			$link = mysql_connect(DB_HOST, DB_USER, DB_PASS);
-			
-			if(!$link) exit(mysql_error());
-						
-			foreach($tables_files as $f){
-			    //$qr =    mysql_query(file_get_contents($f));
-			    //if(!$qr) exit(mysql_error());
+			**/						
+			foreach($tables_files as $f)
+			{
 			    $db->query(trim(file_get_contents($f)));
 			}
-
-			
-			
-			
-
-			
 
 			$db->query('INSERT INTO ?# SET ?a, ip = INET_ATON(?)', USERS_TABLE, array(
 				LOGIN_FIELD => $u['login'],

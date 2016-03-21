@@ -61,6 +61,7 @@ try{
 	
 
 	$_APP = rMyApp::getInstance();
+	$_APP->loadComponents();
 	$_APP->user->authed();
 
 	
