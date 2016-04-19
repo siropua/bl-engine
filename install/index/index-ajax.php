@@ -16,7 +16,7 @@ function echoJSON($data, $status = 200, $error_msg = '')
 	if($user->authed()) $userInfo = array(
 		'user_id' => $user->getID(),
 		'user_login' => $user->email,
-		'locale' => array_flip($_APP->lang->getIDs())[$user->locale],
+		// 'locale' => array_flip($_APP->lang->getIDs())[$user->locale],
 	);
 
 
@@ -49,7 +49,6 @@ try{
 
 
 	$_APP = rMyApp::getInstance();
-	$_APP->addBaseClass('rMyMultilang', 'ml');
 	$_APP->setForceAJAXHit();
 	$_isJSONMode = $_APP->testPath('json', 1);
 	define('IS_JSON_MODE', $_isJSONMode);
