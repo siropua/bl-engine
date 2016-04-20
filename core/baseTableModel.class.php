@@ -11,6 +11,7 @@ abstract class baseTableModel
 	static protected $pKey = 'id'; // primary key
 	static protected $tableName = '';
 	static protected $fields = array();
+	static protected $systemFields = []; // fields with no access to public
 
 
 	protected $lang_key = array('id' => null, 'lang_id' => null);
@@ -195,6 +196,20 @@ abstract class baseTableModel
 	public function setField($key, $val, $instantSave = false)
 	{
 		return $this->setFieldData($key, $val, $instantSave);
+	}
+
+	/**
+	 * Сразу же сохранить данные, но отфильтровав системные поля
+	 * @param  array $data Массив с новыми данными
+	 * @return baseTableModel       
+	 */
+	public function safeSetFields($data, $instantSave = false)
+	{
+		if(is_array($this->systemFields))
+			foreach($this->systemFields as $f)
+				if(isset($data[$f]))
+					unset($data[$f]);
+		return $this->setFields($data, $instantSave);
 	}
 
 	public function setFields($data, $instantSave = false)
