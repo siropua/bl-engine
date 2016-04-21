@@ -42,11 +42,7 @@ try{
 	require_once 'core/baseTableModel.class.php';
 	require_once 'core/baseListModel.class.php';
 	require_once 'core/baseTreeModel.class.php';
-	require_once 'core/router.class.php';
-	require_once 'core/dates.class.php';
 	
-
-
 
 	// автоподключение классов 
 	spl_autoload_register(function($class){
@@ -98,6 +94,11 @@ try{
 			
 		}
 	});
+
+	require_once 'core/rURL.class.php';
+	require_once 'core/router.class.php';
+	require_once 'core/dates.class.php';
+	
 	
 
 

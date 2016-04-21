@@ -82,6 +82,15 @@ abstract class baseTableModel
 		return new static($data);
 	}
 
+	static public function translateSQLNameToPHP($SQLName)
+	{
+		$PHPName = preg_replace_callback('~_([a-z])~i', function($m){
+			return strtoupper($m[1]);
+		}, $SQLName);
+		return $PHPName;
+	}
+
+
 	/**
 	* Создает строчку в базе и создает из неё объект
 
