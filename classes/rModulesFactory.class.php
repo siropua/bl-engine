@@ -168,6 +168,29 @@ class rModulesFactory extends iModulesFactory{
 		return false; // ничего не нашли
 	}
 
+	/**
+	 * Поиск по базе urls
+	 * @return module [description]
+	 */
+	public function get_url()
+	{
+		if(!$url = \ble\rURL::getURL($_SERVER['REQUEST_URI']))
+			return false;
+
+		if(!$url->handler) return false;
+
+		$class = 'rMyURLHandler_'.$url->handler;
+		if(file_exists(ENGINE_PATH.'/lib/'.$class.'.class.php'))
+			require_once ENGINE_PATH.'/lib/'.$class.'.class.php';
+		elseif(file_exists(SITE_PATH.'/lib/'.$class.'.class.php'))
+			require_once SITE_PATH.'/lib/'.$class.'.class.php';
+
+		if(class_exists($class))
+		{
+			
+		}
+	}
+
 
 	/**
 		берем индексный модуль 

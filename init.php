@@ -58,6 +58,10 @@ try{
 			if(file_exists(SITE_PATH.'/models/base/'.$file2include)){
 				include_once SITE_PATH.'/models/base/'.$file2include;
 				return;
+			}elseif(file_exists(ENGINE_PATH.'/models/base/'.$file2include))
+			{
+				include_once ENGINE_PATH.'/models/base/'.$file2include;
+				return;
 			} //else echo 'FILE NOT FOUND '.SITE_PATH.'/models/base/'.$file2include;
 			exit;
 		}elseif (substr($class, 0, 6) == 'model_') {
@@ -65,6 +69,10 @@ try{
 			
 			if(file_exists(SITE_PATH.'/models/'.$file2include)){
 				include_once SITE_PATH.'/models/'.$file2include;
+				return;
+			}elseif(file_exists(ENGINE_PATH.'/models/'.$file2include))
+			{
+				include_once ENGINE_PATH.'/models/'.$file2include;
 				return;
 			}
 		}

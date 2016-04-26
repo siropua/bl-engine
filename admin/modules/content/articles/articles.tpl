@@ -55,8 +55,8 @@
       <td>{if $a.catalog_id}{$a.catalog_title}{else}Без раздела{/if}</td>
       <td></td>
       <td></td>
-      <td><button class="btn btn-xs btn-default"><i class="fa fa-edit"></i></button>
-      <button class="btn btn-xs btn-default"><i class="fa fa-edit"></i></button>
+      <td>
+      <a href="?id={$a.id}" class="btn btn-xs btn-default"><i class="fa fa-edit"></i></a>
       <button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></td>
     </tr>
     {/foreach}
