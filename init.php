@@ -18,7 +18,6 @@ if(file_exists(__DIR__.'/vendor/autoload.php')) require_once __DIR__.'/vendor/au
 
 require_once(__DIR__.'/init/errorhook.php');
 
-
 /**
 	пагнали подключать все необходимое
 **/
@@ -107,6 +106,7 @@ try{
 	require_once 'core/router.class.php';
 	require_once 'core/dates.class.php';
 	
+
 	
 
 

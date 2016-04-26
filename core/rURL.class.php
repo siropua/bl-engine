@@ -74,6 +74,6 @@ class rURL extends \model_urls
 	static public function getURL($url)
 	{
 		if(!$urlParser = \rURLParser::fromURI($url)) return false;
-		return self::get(['url_hash' => self::hashURL($urlParser->safeURL())])
+		return self::get(['url_hash' => self::hashURL($urlParser->safeURL())]);
 	}
 }
