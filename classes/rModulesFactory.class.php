@@ -32,9 +32,10 @@ class rModulesFactory extends iModulesFactory{
 		foreach ($this->order as $method) {
 			$method = 'get_'.$method;
 			// все не сущестующие методы не вызываем
-			if(!method_exists(__CLASS__, $method)) continue; 
+			
+			if(!method_exists($this, $method)) continue; 
 
-			if($module = self::$method()) return $module;
+			if($module = $this->$method()) return $module;
 		}
 
 
@@ -121,7 +122,6 @@ class rModulesFactory extends iModulesFactory{
 		пытаемся найти страницу в таблице статических страниц
 	**/
 	public function get_page(){
-
 		if($text = @$this->db->selectRow('SELECT * FROM static_pages WHERE url = ?', $this->rURL->safePath())){
 
 
