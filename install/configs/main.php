@@ -190,5 +190,5 @@ define('IS_MULTISITE', false);
 **/
 
 $_EngineModulesOrder = array(
-	'site', 'engine', 'tpl', 'blog', 'page'
+	'url', 'site', 'engine', 'tpl', 'blog', 'page'
 );
