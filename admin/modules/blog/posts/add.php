@@ -7,6 +7,7 @@ class module_posts_add extends rMyAdminModule{
 	public function Init()
 	{
 		$this->blog = new rMyBlog($this->app);
+		$this->blog->setSetting('skipTextCheck', 1);
 	}
 
 	public function Run()
