@@ -15,10 +15,17 @@ class Article extends \model_articles
 	{
 		$data['date_add'] = $data['last_update'] = time();
 		if(!empty($data['id'])) unset($data['id']);
-		if(!$data['owner_id'] = rMyApp::getInstance()->user->getID())
+		if(!$data['owner_id'] = \rMyApp::getInstance()->user->getID())
 			$data['owner_id'] = NULL;
 
-		if(!$data['catalog_id']) $data['catalog_id'] = NULL;
+		$catalog = NULL;
+		if($data['catalog_id'] && ($catalog = CatalogItem::get($data['catalog_id']))) {
+			$data['catalog_id'] = $catalog->id;
+			
+		}else{
+			$data['catalog_id'] = NULL;
+		
+		}
 
 		if(!isset($data['title'])) $data['title'] = '';
 		$data['title'] = trim($data['title']);
@@ -28,13 +35,15 @@ class Article extends \model_articles
 		}
 
 		if(empty($data['url']))
-			$data['url'] = rURLParser::fineURLPart($data['title'] ? $data['title'] : date("d-m-Y-H-i-s"));
+			$data['url'] = \rURLParser::fineURLPart($data['title'] ? $data['title'] : date("d-m-Y-H-i-s"));
 		else 
-			$data['url'] = rURLParser::fineURLPart($data['url']);
+			$data['url'] = \rURLParser::fineURLPart($data['url']);
 
 		$article = parent::create($data);
 
-		if($url = ble\rURL::createURL($data['url'], $baseURL, 'articles', $article->id))
+		if($catalog) $catalog->inc('articles_count');
+
+		if($url = \ble\rURL::createURL($data['url'], $baseURL, 'articles', $article->id))
 			$article->setField('url_id', $url->id, true);
 
 		return $article;
@@ -123,5 +132,20 @@ class Article extends \model_articles
 		}
 
 		return $text;
+	}
+
+	public function remove()
+	{
+		if($this->catalog_id)
+		{
+			if($catalog = CatalogItem::get($this->catalog_id))
+			{
+				$catalog->dec('articles_count');
+			}
+		}
+
+		$this->db->query('DELETE FROM urls WHERE handler = "articles" AND handled_id = ?d', $this->id);
+
+		return parent::remove();
 	}
 }

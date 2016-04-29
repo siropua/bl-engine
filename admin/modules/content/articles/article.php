@@ -41,79 +41,16 @@ class module_articles_article extends rMyAdminModule{
 		return $result;
 	}
 
-	public function Run_attach(){
-		
-		if(empty($_POST['postID'])){
-			throw new JSONException('post-id not specified');
-		}
-
-		if(empty($_FILES['secpic']['tmp_name'])){
-			throw new JSONException('file not specified');
-			
-		}
-
-		$b = new rMyBlog($this->app);
-		$post = new rBlogPost($b, $_POST['postID']);
-
-		$fn = $post->attachPic($_FILES['secpic']);
-
-		if(!$fn) throw new JSONException('Cant attach picture!');
-
-		$result = array('ok' => 1, 'pic' => $fn);
-		
-
-		return $result;
-	}
-
-	public function Run_attachweb()
-	{
-		if(empty($_POST['postID'])){
-			throw new JSONException('post-id not specified');
-		}
-
-		if(empty($_POST['pic'])){
-			return array();
-		}
-
-		$picName = basename($_POST['pic']);
-
-
-		$b = new rMyBlog($this->app);
-		$post = new rBlogPost($b, $_POST['postID']);
-
-		$tmpPic = TMP_PATH.'/'.uniqid('webpic');
-		require 'rlib/vibrowser.inc.php';
-		$vb = new ViBrowser;
-		$vb->setURL($_POST['pic']);
-		$vb->getURLToFile($_POST['pic'], $tmpPic);
-
-		if(!file_exists($tmpPic)) throw new Exception('Cant download a pic');
-
-		$fn = $post->attachPic(array(
-			'tmp_name' => $tmpPic,
-			'name' => $picName,
-		)); 
-
-		if(!$fn) throw new JSONException('Cant attach picture!');
-
-		$result = array('ok' => 1, 'pic' => $fn);
-		
-
-		return $result;
-	}
-
 	public function Run_delete()
 	{
 
 		if(empty($_POST['id'])) throw new JSONException('Specify ID!');
 
-		$b = new rMyBlog($this->app);
-		$post = new rBlogPost($b, $_POST['id']);
-		if(!$post->delete()){
-			throw new JSONException('Cant delete post!');
-		}
+		if(!$a = Articles\Article::get($_POST['id'])) throw new rNotFoundException("");
+		
+		$a->remove();
 
-		return array('deleted_id' => $post->id);
+		return 'OK';
 		
 	}
 	
