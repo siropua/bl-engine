@@ -22,6 +22,7 @@ RewriteRule ^(.*)   http://%1/$1 [R=301,L]
 RewriteCond     %{REQUEST_FILENAME} !\.thumbs/
 RewriteRule "(^|/)\." - [F]
 
+RewriteRule ^api/.+$ index-api.php [L,QSA]
 RewriteRule ^(ajax|json)/.+$ index-ajax.php [L,QSA]
 
 

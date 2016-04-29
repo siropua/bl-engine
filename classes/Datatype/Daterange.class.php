@@ -40,6 +40,6 @@ class Daterange
 
 	public function days()
 	{
-		return $this->from->diff($this->to, true)->format('%d');
+		return $this->from->diff($this->to, true)->format('%a') + 1;
 	}
 }

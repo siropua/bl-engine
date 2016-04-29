@@ -164,6 +164,9 @@ define('FAVICON_FILE_TYPE', '{%%FAVICON_FILE_TYPE%%}');
 define('STATIC_TPL_FOLDER', '{%%STATIC_TPL_FOLDER%%}');
 define('SIMPLE_BLOG_MODE', '{%%SIMPLE_BLOG_MODE%%}');
 
+define('API_VERSION', 'v1');
+define('API_PATH', SITE_PATH.'/api/'.API_VERSION);
+
 
 set_include_path(
 		'.'.PATH_SEPARATOR.
@@ -187,5 +190,5 @@ define('IS_MULTISITE', false);
 **/
 
 $_EngineModulesOrder = array(
-	'site', 'engine', 'tpl', 'blog', 'page'
+	'url', 'site', 'engine', 'tpl', 'blog', 'page'
 );

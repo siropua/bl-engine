@@ -82,6 +82,15 @@ class baseListModel
 
 	protected function makeWhereString($param){
 		if (is_array($param)){
+			if(empty($param[0]))
+			{
+				$where = '';
+				$param2 = [];
+				foreach ($param as $pKey => $pValue) {
+					$param2[] = '`'.$pKey.'` = "'.mysqli_escape_string(DB::getInstance()->link, $pValue).'"';
+				}
+				$param = $param2;
+			}
 			return implode(' AND ', $param);
 		}
 		if (is_string($param)){

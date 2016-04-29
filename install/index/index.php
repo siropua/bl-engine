@@ -13,7 +13,7 @@ try{
 	
 
 	$_APP = rMyApp::getInstance();
-	$_APP->addBaseClass('rMyMultilang', 'ml');
+	$_APP->loadComponents();
 
 	// логинимся
 	if(!empty($_POST['login2site'])){
@@ -59,23 +59,36 @@ try{
 
 	
 
-}catch(dbException $e){
+}
+
+catch(rUnauthorized $e)
+{
+	// $_APP->setContainer('index.tpl');
+	$_APP->render('login.tpl');
+
+}
+/* catch(dbException $e){
 	$info = $e->getInfo();
-	rSiteNotifier::outputError($info['message'], $info, TEMPLATES_PATH.'/errors/fatal.tpl', 'E_DB_ERROR', true);
+	//rSiteNotifier::outputError($info['message'], $info, TEMPLATES_PATH.'/errors/fatal.tpl', 'E_DB_ERROR', true);
 	
-}catch(rNotFound $e){
+}*/
+catch(rNotFound $e){
 	//if(!$module) $module = new rMySite($_APP);
 
 	$_APP->setContainer('index.tpl');
+	$_APP->assign('not_found_message', $e->getMessage());
 	$_APP->notFound();
 
 	
-}catch(SmartyException $e){
+}catch(rNotFoundException $e){
+	//if(!$module) $module = new rMySite($_APP);
+
+	$_APP->setContainer('index.tpl');
+	$_APP->assign('not_found_message', $e->getMessage());
+	$_APP->notFound();
+
+	
+}/* catch(SmartyException $e){
 	rSiteNotifier::outputError($e->getMessage(), '', TEMPLATES_PATH.'/errors/notice.tpl', 'E_TPL_ERROR');
 	//exit;
-}catch(Exception $e){
-	// if($module)
-	// 	$_APP->renderError($e->getMessage());
-	// else
-		rSiteNotifier::outputError('', $e->getMessage(), TEMPLATES_PATH.'/errors/fatal.tpl', 'E_ENGINE_ERROR', true);
-}
+} */

@@ -30,7 +30,7 @@ class module_posts_add extends rMyAdminModule{
 
 
 		$this->app->addFWJS('multi_uploader/js/vendor/jquery.ui.widget.js');
-		$this->app->addFWJS('multi_uploader/js/load-image.min.js');
+		$this->app->addFWJS('multi_uploader/js/load-image.all.min.js');
 		$this->app->addFWJS('multi_uploader/js/canvas-to-blob.min.js');
 		//$this->app->addFWJS('multi_uploader/js/jquery.fileupload-image.js');
 		$this->app->addFWJS('multi_uploader/js/jquery.fileupload.js');

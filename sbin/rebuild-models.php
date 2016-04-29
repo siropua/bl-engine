@@ -1,9 +1,14 @@
 <?php
 
+echo "\nConfiguring...\n";
+error_reporting(E_ALL);
+ini_set("display_errors", "on");
 require_once __DIR__.'/../../configs/main.php';
 require_once ENGINE_PATH.'/init.php';
 
 echo "\n\n\n";
+
+
 
 /**
 * Model Rebuilder
@@ -11,7 +16,7 @@ echo "\n\n\n";
 class modelRebuilder
 {
 
-	protected $systemTables = array("amnesia","blog_comments","blog_comments_t","blog_favorites","blog_images","blog_posts","blog_posts_ext","blog_posts_visits_map","blog_posts_votes","blog_sources","blog_tags","blog_tags_map","blog_visits","blog_visits_map","blogs","feedbacks","menu_links","pages","pages_comments","pages_comments_t","pages_items","ref_landings","ref_sources","ref_visits","site_settings","social_networks","stat_agents","static_pages","tags","users","users_email_changes","users_external","users_info","users_stats");
+	protected $systemTables = array();
 
 	protected $path;
 
@@ -161,7 +166,7 @@ class modelRebuilder
 		return $code;
 	}
 
-	public function translateSQLNameToPHP($SQLName)
+	static public function translateSQLNameToPHP($SQLName)
 	{
 		$PHPName = preg_replace_callback('~_([a-z])~i', function($m){
 			return strtoupper($m[1]);
@@ -184,9 +189,7 @@ try{
 	$rebuilder = new modelRebuilder(SITE_PATH.'/models/base');
 
 
-	$rebuilder->rebuildWithout(array(
-		'beers'
-	));
+	$rebuilder->rebuildWithout([]);
 
 
 

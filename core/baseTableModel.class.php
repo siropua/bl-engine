@@ -11,6 +11,7 @@ abstract class baseTableModel
 	static protected $pKey = 'id'; // primary key
 	static protected $tableName = '';
 	static protected $fields = array();
+	static protected $systemFields = []; // fields with no access to public
 
 
 	protected $lang_key = array('id' => null, 'lang_id' => null);
@@ -49,14 +50,55 @@ abstract class baseTableModel
 		return new static($data);
 	}
 
-	static public function get($id)
+	/**
+	* Конструирует объект по primary-key (хотя можно и по составному)
+
+	* @var $id int|string|array - если int или string то значение единичного ключа. Если массив - набор field => value
+	* @var $key string|null если задано, то имя ключа, по которому высылается
+	* @return baseTableModel|false либо созданный объект, либо false, если такой строки не найдено
+	**/
+	static public function get($id, $key = null)
 	{
-		$data = DB::getInstance()->selectRow('SELECT * FROM ?# WHERE ?# = ?', static::$tableName, static::$pKey, $id);
+		$db = DB::getInstance();
+
+		if(is_array($id))
+		{
+			// ключ составной, выбираем по нескольким полям!
+			
+			$where = array();
+			foreach($id as $field => $value) $where[] = sprintf('%s=%s', $db->escape($field, true), $db->escape($value));
+
+			$data = $db->selectRow('SELECT * FROM ?# WHERE '.implode(' AND ', $where).' LIMIT 1', static::$tableName);
+
+		}else
+		{
+			if(!$key) $key = static::$pKey;
+			$data = $db->selectRow('SELECT * FROM ?# WHERE ?# = ? LIMIT 1', static::$tableName, $key, $id);
+		}
+
+		
 		if(!$data) return false;
 
 		return new static($data);
 	}
 
+	static public function translateSQLNameToPHP($SQLName)
+	{
+		$PHPName = preg_replace_callback('~_([a-z])~i', function($m){
+			return strtoupper($m[1]);
+		}, $SQLName);
+		return $PHPName;
+	}
+
+
+	/**
+	* Создает строчку в базе и создает из неё объект
+
+	* @var $data array массив с данными. автоматически фильтруется
+	* @var $doGetAfterInsert bool надо ли принудительно сделать SELECT из таблицы после вставки, либо заполнить массив «предполагаемыми» данными
+	* @var $updateIfExists bool делать ли ON DUPLICATE KEY UPDATE
+	* @return baseTableModel|false либо созданный объект, либо false, если добавить строку не удалось
+	*/
 	static public function create($data, $doGetAfterInsert = false, $updateIfExists = false)
 	{
 		$insData = array();
@@ -74,7 +116,7 @@ abstract class baseTableModel
 		if($updateIfExists){
 			$newID = DB::getInstance()->query('INSERT INTO ?# SET ?a ON DUPLICATE KEY UPDATE ?a', static::$tableName, $insData, $insData);
 		}else{
-			$newID = DB::getInstance()->query('INSERT INTO ?# SET ?a', static::$tableName, $insData);	
+			$newID = DB::getInstance()->query('INSERT INTO ?# SET ?a', static::$tableName, $insData);
 		}
 
 		$item = false;
@@ -154,6 +196,31 @@ abstract class baseTableModel
 		return $this;
 	}
 
+	/**
+	 * Alias for setFieldData method.
+	 * @param string  $key         Field name
+	 * @param mixed  $val         Field value
+	 * @param boolean $instantSave Instant save to database (or you must call save() method at and instead)
+	 */
+	public function setField($key, $val, $instantSave = false)
+	{
+		return $this->setFieldData($key, $val, $instantSave);
+	}
+
+	/**
+	 * Сразу же сохранить данные, но отфильтровав системные поля
+	 * @param  array $data Массив с новыми данными
+	 * @return baseTableModel       
+	 */
+	public function safeSetFields($data, $instantSave = false)
+	{
+		if(is_array($this->systemFields))
+			foreach($this->systemFields as $f)
+				if(isset($data[$f]))
+					unset($data[$f]);
+		return $this->setFields($data, $instantSave);
+	}
+
 	public function setFields($data, $instantSave = false)
 	{
 		if(!empty($data['lang_id'])){
@@ -175,8 +242,12 @@ abstract class baseTableModel
 	**/
 	public function save()
 	{
-		$this->db->query('UPDATE ?# SET ?a WHERE ?# = ?', static::$tableName, $this->data, static::$pKey, $this->getID());
-
+		$this->db->query('UPDATE ?# SET ?a WHERE ?# = ?',
+			static::$tableName,
+			array_intersect_key($this->data, static::$fields),
+			static::$pKey,
+			$this->getID()
+		);
 
 		if (!empty($this->lang_key['lang_id']) && !empty($this->lang_data)){
 			$this->db->query('INSERT INTO ?# (?#) VALUES (?a) ON DUPLICATE KEY UPDATE ?a',

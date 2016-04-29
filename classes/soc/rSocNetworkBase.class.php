@@ -164,7 +164,7 @@ class rUserExternal
 
 	public function getMySocials()
 	{
-		$list = $this->u->_db->select('SELECT e.network_id AS ARRAY_KEY, e.*, 
+		$list = ble\DB::getInstance()->select('SELECT e.network_id AS ARRAY_KEY, e.*, 
 				n.url as network_url, n.name as network_name 
 			FROM users_external e 
 			LEFT JOIN social_networks n ON n.id = e.network_id
