@@ -89,7 +89,16 @@ class Article extends \model_articles
 
 	public function getSections()
 	{
-		return $this->db->select('SELECT * FROM articles_sections WHERE article_id = ?d ORDER BY order_n', $this->id);
+		$sections = $this->db->select('SELECT * FROM articles_sections WHERE article_id = ?d ORDER BY order_n', $this->id);
+
+		foreach ($sections as $k => $s) {
+			if($s['type'] == 'gallery')
+			{
+				$sections[$k]['files'] = json_decode($s['text_data2'], true);
+			}
+		}
+
+		return $sections;
 	}
 
 	public function getData()

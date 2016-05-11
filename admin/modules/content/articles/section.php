@@ -59,6 +59,7 @@ class module_articles_section extends rMyAdminModule
 		$section->uploadPic($_FILES['secpic']['tmp_name']);
 
 		$return = [
+			'type'	=> 'image',
 			'id' 	=> $section->id,
 			'file' 	=> $section->string_data,
 			'url' 	=> $section->getArticle()->getURL()
@@ -75,5 +76,24 @@ class module_articles_section extends rMyAdminModule
 		$section->remove();
 
 		return 'OK';
+	}
+
+	public function RunAJAX_gallery()
+	{
+		if(empty($_POST['id'])) return false;
+		if(empty($_FILES['gallery']['tmp_name'])) return false;
+		if(!is_uploaded_file($_FILES['gallery']['tmp_name'])) return false;
+
+		$section = Articles\SectionGallery::get($_POST['id']);
+
+		$section->uploadPic($_FILES['gallery']['tmp_name']);
+
+		return [
+			'type' => 'gallery',
+			'id' 	=> $section->id,
+			'files' => $section->getImages(),
+			'url' 	=> $section->getArticle()->getURL()
+		];
+		return $section->getData();
 	}
 }

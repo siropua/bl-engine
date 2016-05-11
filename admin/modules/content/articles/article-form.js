@@ -15,14 +15,18 @@ $(function(){
 	
 	$('.add-item-text').on('click', loadTextItem);	
 	$('#saveButton').on('click', save);
-	$('.btn-action-delete').on('click', deleteSection)
-	$('#content-form').on('submit', function () {
-		tinyMCE.execCommand("mceCleanup");
-		tinyMCE.triggerSave();
-		tinyMCE.execCommand("mceCleanup");
-		tinyMCE.triggerSave();
-		return true;
-	});
+	$('#content-form')
+		.on('click', '.btn-action-delete', deleteSection)
+		.on('click', '.btn-action-up', sectionUp)
+		.on('click', '.btn-action-down', sectionDown)
+		.on('submit', function () {
+			renumberItems();
+			tinyMCE.execCommand("mceCleanup");
+			tinyMCE.triggerSave();
+			tinyMCE.execCommand("mceCleanup");
+			tinyMCE.triggerSave();
+			return true;
+		});
 
 	initItemEditor('.a-items .editable', false);
 
@@ -30,6 +34,15 @@ $(function(){
         dataType: 'json',
         sequentialUploads: false,
         add: function (e, fileForm) {
+
+        	// console.log(e);
+        	// console.log(fileForm);
+
+        	if(fileForm.paramName == "gallery")
+        	{
+        		return add2gallery(this, e, fileForm);
+        	}
+
         	$.post(moduleJSON + 'section/new', {type: 'image', article_id: articleID}, function(data)
 			{
 				if(typeof data.data.id == 'undefined') return false;
@@ -78,12 +91,10 @@ $(function(){
     })
  	.bind('fileuploadstart', picsUploadStart)
  	.bind('fileuploadstop', picsAllUploaded)
- 	.bind('fileuploadprogressall', picUploading)
- 	.on('fileuploadprocessalways', function (e, data) {
- 		console.log('fileuploadprocessalways');
-    });
+ 	.bind('fileuploadprogressall', picUploading);
 
- 
+
+	renumberItems(); 
 
  	var $d = $('.date-pick');
 	if($d.length)$d.pickmeup({
@@ -101,12 +112,41 @@ $(function(){
 
 });
 
+function add2gallery(that, e, fileForm) 
+{
+	$item = $(e.delegatedEvent.originalEvent.path[1])
+				.closest('.a-item');
+    
+    fileForm.url = moduleJSON + 'section/gallery';
+			
+	fileForm.formData = { id: $item.data('id') };
+	fileForm.submit(); 
+
+    return true;
+}
+
+function renumberItems() {
+	var i = 0;
+	$('.a-items .a-item').each(function () {
+		i++;
+		var $in = $('input.order_n', this);
+		if(!$in.length){
+			$in = $('<input type="hidden" name="sections['+$(this).data('id')+'][order_n]">');
+			$(this).append($in);
+		}
+		$in.val(i);
+	});
+
+}
+
 function deleteSection() {
 	if(!confirm('Удалить секцию и всё её содержимое?\nЭто невозможно будет отменить!')) return false;
 	var $item = $(this).closest('.a-item');
 	$.post(moduleJSON + 'section/delete', {id: $item.data('id')}, function(data) {
 		if(typeof data.data != 'undefined' && data.data == 'OK')
-			$item.fadeOut();
+			$item.fadeOut(function () {
+				$(this).remove();
+			});
 	})
 }
 
@@ -162,6 +202,22 @@ function createSection(name, callback) {
 	});
 }
 
+function sectionUp() {
+	var $item = $(this).closest('.a-item');
+	var $prev = $item.prev();
+	if(!$prev.hasClass('a-item')) return false;
+	$item.insertBefore($prev);
+	renumberItems();
+}
+
+function sectionDown() {
+	var $item = $(this).closest('.a-item');
+	var $next = $item.next();
+	if(!$next.hasClass('a-item')) return false;
+	$item.insertAfter($next);
+	renumberItems();
+}
+
 function save() {
 	var saveData = {
 		sections: {},
@@ -190,8 +246,8 @@ function save() {
 
 function pictureUploaded(e, data) {
 
-	//console.log('DONE:');
-    console.log(data);
+	console.log('DONE:');
+    
     if(typeof data.result == 'undefined'){
     	alert('Result is undefined!');
     	return false;
@@ -203,6 +259,35 @@ function pictureUploaded(e, data) {
     }
 
     var d = data.result.data;
+
+    if(typeof d.type == 'undefined')
+    {
+    	alert('Невозможно загрузить картинку! Какая-то ботва.');
+    	return false;
+    }
+
+    if(d.type == 'gallery')
+    {
+    	$item = $('#item'+d.id);
+    	if($item.data('type') == 'image' && false == true)
+    	{
+    		var $imageItem = $('#templates .a-item-gallery').clone();
+
+
+
+				$('.content-pre', $imageItem).attr('id', 'sections['+id+'][text_data]');
+				$('.content-post', $imageItem).attr('id', 'sections['+id+'][text_data1]');
+				initItemEditor('#item'+id+' .editable', false);
+
+    	}
+    	console.log(d);
+    	var $ul = $('<ul>');
+    	for(var i = 0; i < d.files.length; i++){
+    		$ul.append('<li><img src="'+d.url+d.files[i].file+'"></li>');
+    	}
+    	$('#item'+d.id + ' .gallery').html($ul);
+    	return true;
+    }
 
     if(typeof d.file == 'undefined'){
     	alert('Cant upload a pic!');

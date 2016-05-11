@@ -16,6 +16,8 @@
 			{include file='sections/text.tpl'}
 		{elseif $sec.type == 'image'}
 			{include file='sections/image.tpl'}
+		{elseif $sec.type == 'gallery'}
+			{include file='sections/gallery.tpl'}
 		{/if}
 		{/foreach}
 		{$sec = false}
@@ -28,7 +30,7 @@
 
 	Добавить: 
 		<button class="btn btn-default add-item-text" type="button">Блок текста</button>
-		<button class="btn btn-default fileinput-button" type="button"><i class="fa fa-folder-open"></i> Картинку<input type="file" name="secpic" class="" id="secondPics" multiple></button>
+		<button class="btn btn-default fileinput-button" type="button"><i class="fa fa-folder-open"></i> Картинку<input type="file" name="secpic" multiple></button>
 		<button class="btn btn-default" type="button">Слайды</button>
 		<button class="btn btn-default" type="button">Видео</button>
 
@@ -60,5 +62,6 @@
 	
 	{include file='sections/text.tpl'}
 	{include file='sections/image.tpl'}
+	{include file='sections/gallery.tpl'}
 
 </div>

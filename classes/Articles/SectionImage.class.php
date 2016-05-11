@@ -16,19 +16,27 @@ class SectionImage extends \model_articlesSections
 
 	public function uploadPic($file)
 	{
-		require_once 'rlib/rImage.class.php';
-		if(!$rImage = \rImage::getFromFile($file)) return false;
-		$rImage->setDestination($this->getArticle()->getPath());
-
-		$resized = $rImage->saveResized(2000, 1600);
-		$thumb = $rImage->setFile($resized)->setResizeMode('thumbnail')->saveResized(200, 200, 'thumb_'.$resized->getBasename());
-
+		
+		$resized = $this->_uploadPic($file);
+		
 		$this->setFields([
 			'string_data' => $resized->getBasename(),
 			'int_data' => $resized->filesize(),
 			'int_data1' => $resized->w(),
 			'int_data2' => $resized->h(),
 			], true);
+
+		return $resized;
+	}
+
+	protected function _uploadPic($file)
+	{
+		require_once 'rlib/rImage.class.php';
+		if(!$rImage = \rImage::getFromFile($file)) return false;
+		$rImage->setDestination($this->getArticle()->getPath());
+
+		$resized = $rImage->saveResized(2000, 1600);
+		$thumb = $rImage->setFile($resized)->setResizeMode('thumbnail')->saveResized(200, 200, 'thumb_'.$resized->getBasename());
 
 		return $resized;
 	}
