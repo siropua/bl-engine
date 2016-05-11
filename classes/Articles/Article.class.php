@@ -134,7 +134,23 @@ class Article extends \model_articles
 				$text .= '<div id="section'.$sec['id'].'" class="article-section article-section-image">';
 				$text .= '<div class="pre-image">'.$sec['text_data'].'</div>';
 				$text .= '<div class="image"><img src="'.$this->getURL().$sec['string_data'].'"></div>';
-				$text .= '<div class="pre-image">'.$sec['text_data'].'</div>';
+				$text .= '<div class="post-image">'.$sec['text_data1'].'</div>';
+				$text .= '</div>';
+			}else if($sec['type'] == 'gallery')
+			{
+				if(!$sec['files']) continue;
+				$text .= '<div id="section'.$sec['id'].'" class="article-section article-section-gallery">';
+				$text .= '<div class="pre-gallery">'.$sec['text_data'].'</div>';
+				$text .= '<div class="gallery"><ul>';
+
+				foreach ($sec['files'] as $file) {
+					$text .= "<li>";
+					$text .= '<img src="'.$this->getURL().$file['file'].'">';
+					$text .= "</li>";
+				}
+
+				$text .= '</ul></div>';
+				$text .= '<div class="post-gallery">'.$sec['text_data1'].'</div>';
 				$text .= '</div>';
 			}
 			$text .= "\n";			

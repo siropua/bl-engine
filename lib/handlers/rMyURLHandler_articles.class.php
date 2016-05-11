@@ -38,6 +38,8 @@ class rMyURLHandler_articles extends rMyURLHandler
 
 	public function renderPage()
 	{
+		$this->app->addJS('~DESIGN/bxslider/jquery.bxslider.min.js');
+		$this->app->addCSS('bxslider/jquery.bxslider.css');
 		$this->app->addJS('~DESIGN/articles/articles.js');
 		$this->app->addCSS('articles/articles.css');
 		$this->app->render('articles/view.tpl');
