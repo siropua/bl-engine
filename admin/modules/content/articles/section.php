@@ -73,7 +73,19 @@ class module_articles_section extends rMyAdminModule
 		if(empty($_POST['id'])) return false;
 		if(!$section = model_articlesSections::get($_POST['id'])) return false;
 
-		$section->remove();
+		if($section->type == 'gallery')
+		{
+			$gallerySection = Articles\SectionGallery::hydrate($section->getData());
+
+			$gallerySection->remove();
+		}elseif($section->type == 'image'){
+			$gallerySection = Articles\SectionImage::hydrate($section->getData());
+
+			$gallerySection->remove();
+
+		}else{
+			$section->remove();
+		}
 
 		return 'OK';
 	}

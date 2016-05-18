@@ -143,10 +143,13 @@ function deleteSection() {
 	if(!confirm('Удалить секцию и всё её содержимое?\nЭто невозможно будет отменить!')) return false;
 	var $item = $(this).closest('.a-item');
 	$.post(moduleJSON + 'section/delete', {id: $item.data('id')}, function(data) {
-		if(typeof data.data != 'undefined' && data.data == 'OK')
+		if(typeof data.data != 'undefined' && data.data == 'OK'){
+			save();
 			$item.fadeOut(function () {
 				$(this).remove();
+
 			});
+		}
 	})
 }
 
@@ -219,25 +222,13 @@ function sectionDown() {
 }
 
 function save() {
-	var saveData = {
-		sections: {},
-	};
-	$items = $('.a-items .a-item');
-	$items.each(function (item) {
-		var contents = $('.content', this);
-		if(contents.length < 1) return;
-		var dataItem = {};
-		for(var i = 0; i <= contents.length; i++)
-		{
-			if(typeof contents[i] != 'object') continue;
-			dataItem[$(contents[i]).data('name')] = $(contents[i]).html();
-		}
-		saveData['sections'][$(this).data('id')] = dataItem;
+	$('#saveButton').prop('disabled', true);
+	tinymce.triggerSave();
+	var saveData = $('#content-form').serialize();
+	$.post(moduleJSON + 'article/save', saveData, function (data) {
+		$('#saveButton').prop('disabled', false);
+		console.log(data);
 	});
-
-	// $.post(moduleJSON + 'article/save', )
-
-	console.log(saveData);
 }
 
 
@@ -300,7 +291,8 @@ function pictureUploaded(e, data) {
 }
 
 function picsAllUploaded(e, data){
-	
+	console.log('all pics uploaded!');
+	save();
 }
 
 function	picsUploadStart(e, data){

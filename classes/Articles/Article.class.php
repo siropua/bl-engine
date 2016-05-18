@@ -117,6 +117,11 @@ class Article extends \model_articles
 		return $model->setFields($data, true);
 	}
 
+	public function updateCached()
+	{
+		return $this->setField('text', $this->renderSectionsAsText(), true);
+	}
+
 	public function renderSectionsAsText()
 	{
 		$sections = $this->getSections();
@@ -169,8 +174,27 @@ class Article extends \model_articles
 			}
 		}
 
+		$sections = $this->getSections();
+		foreach ($sections as $s) {
+			if($s['type'] == 'image')
+			{
+				$this->removePic($s['string_data']);
+			}elseif($s['type'] == 'gallery' && is_array($s['files']))
+			{
+				foreach ($s['files'] as $f) {
+					$this->removePic($f['file']);
+				}
+			}
+		}
+
 		$this->db->query('DELETE FROM urls WHERE handler = "articles" AND handled_id = ?d', $this->id);
 
 		return parent::remove();
+	}
+
+	public function removePic($pic)
+	{
+		@unlink($this->getPath().'/'.$pic);
+		@unlink($this->getPath().'/thumb_'.$pic);
 	}
 }

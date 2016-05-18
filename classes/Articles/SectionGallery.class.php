@@ -10,6 +10,8 @@ class SectionGallery extends SectionImage
 
 	public function uploadPic($file)
 	{
+		$this->maxHeight = $this->int_data2;
+
 		$resized = $this->_uploadPic($file);
 		$images = $this->getImages();
 
@@ -34,5 +36,17 @@ class SectionGallery extends SectionImage
 		if(!$images) $images = [];
 
 		return $images;
+	}
+
+	public function remove()
+	{
+		$a = $this->getArticle();
+		foreach ($this->getImages() as $f) {
+			$a->removePic($f['file']);
+		}
+
+		parent::remove();
+
+		$a->updateCached();
 	}
 }

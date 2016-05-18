@@ -49,6 +49,8 @@ input.title{
 
 .a-item-gallery .gallery ul{
 	list-style: none;
+	padding: 0;
+	margin: 0;
 }
 
 .a-item-gallery .gallery ul li{

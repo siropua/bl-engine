@@ -3,6 +3,7 @@
 </script>
 
 <form id="content-form" action="{$SELF}" class="form" enctype="multipart/form-data" method="post">
+<input type="hidden" value="{$article.id}" name="id">
 	
 	<div class="row a-row">
 		<div class="form-group col-sm-10 a-body">
@@ -31,10 +32,38 @@
 	Добавить: 
 		<button class="btn btn-default add-item-text" type="button">Блок текста</button>
 		<button class="btn btn-default fileinput-button" type="button"><i class="fa fa-folder-open"></i> Картинку<input type="file" name="secpic" multiple></button>
-		<button class="btn btn-default" type="button">Слайды</button>
-		<button class="btn btn-default" type="button">Видео</button>
-
+		
 	<hr>
+
+	<div class="row">
+		<div class="col-sm-6 form-group">
+			<label>Теги</label>
+			<input type="text" name="post[tags]" value="{$article.tags}" class="form-control">
+		</div>
+		<div class="col-sm-6 form-group">
+			<label>Оригинал статьи</label>
+			<input type="text" name="post[original_link]" value="{$article.original_link}" class="form-control">
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-4 form-group">
+			<label>Дата публикации</label>
+			<input type="text" name="post[public_date]" value="{$article.public_date}" class="form-control">
+		</div>
+		<div class="col-sm-4 form-group">
+			<label>Доступно до</label>
+			<input type="text" name="post[show_till]" value="{$article.show_till}" class="form-control">
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-4 form-group">
+			<label><input type="checkbox" name="is_allow_comments" value="1"> Разрешить комментарии</label>
+		
+		</div>
+		
+	</div>
 
 	<div class="row">
 		<div class="col-lg-3 col-md-4 col-sm-5 col-xs-6">
