@@ -37,15 +37,6 @@ $(function(){
         sequentialUploads: true,
         add: function (e, fileForm) {
 
-        	// console.log('add');
-        	// console.log(e);
-        	// console.log(fileForm);
-
-        	// IID++;
-
-        	// console.log(IID);
-
-        	// return;
 
         	if(typeof fileForm.galleryID != 'undefined')
         	{
@@ -93,25 +84,7 @@ $(function(){
 			});
         },
         
-        submit: function (e, data) {
-        	// console.log('SUBMIT -----');
-        	// console.log(e);
-        	// console.log(data);
-        	// console.log('------------');
-        	// return false;
-        },
-        send: function (e, data) {
-        	// console.log('SEND --- ');
-        	// console.log(e);
-        	// console.log(data);
-        	// console.log('---------');
-
-        	// return false;
-        },
-        change: function (e, data) {		
-        	
-        	
-        },
+        
         done: pictureUploaded,
         disableImageResize: false,
     	imageMaxWidth: 800,
@@ -254,7 +227,7 @@ function initItemEditor(selector, focus) {
 	  ],
 	  setup : function(ed) {
           ed.on('change', function(ed, e) {
-              postUpdated();
+              //postUpdated();
           });
           ed.on('init', function(ed) {
 	        if(focus)ed.target.focus();
@@ -267,6 +240,7 @@ function initItemEditor(selector, focus) {
 }
 
 function postUpdated() {
+	console.log('postUpdated!');
 	tinymce.triggerSave();
 }
 
