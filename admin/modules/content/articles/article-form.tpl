@@ -29,10 +29,24 @@
 
 	<hr>
 
-	Добавить: 
-		<button class="btn btn-default add-item-text" type="button">Блок текста</button>
-		<button class="btn btn-default fileinput-button" type="button"><i class="fa fa-folder-open"></i> Картинку<input type="file" name="secpic" multiple></button>
-		
+	<div class="addContentButtons">Добавить: 
+			<button class="btn btn-default add-item-text" type="button">Блок текста</button>
+			<button class="btn btn-default fileinput-button" type="button"><i class="fa fa-image"></i> Картинку<input type="file" name="secpic" multiple></button>
+			<button class="btn btn-default fileinput-button" type="button"><i class="fa fa-sort fa-rotate-90"></i> Галерею<input type="file" name="gallery_create" multiple></button>
+			</div>
+			
+		<div class="panel panel-default" id="photosProgress">
+			<div class="panel-body">
+			<div class="progress">
+				<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">
+				0%
+				</div>
+			</div>
+			Загрузка фоточек… <span class="bitrate-info"></span>
+			</div>
+			
+		</div>
+
 	<hr>
 
 	<div class="row">

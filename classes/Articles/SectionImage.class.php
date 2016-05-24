@@ -12,9 +12,11 @@ class SectionImage extends \model_articlesSections
 	protected 	$maxWidth = 2000,
 				$maxHeight = 1000;
 
+	protected static $myType = 'image';
+
 	static public function createSection(\rMyArticle $a)
 	{
-		return self::create(['article_id' => $a->id, 'type' => 'image', 'order_n' => self::getNewN($a->id)]);
+		return self::create(['article_id' => $a->id, 'type' => static::$myType, 'order_n' => self::getNewN($a->id)]);
 	}
 
 	public function uploadPic($file)

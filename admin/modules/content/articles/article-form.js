@@ -11,6 +11,8 @@ var postMonitorer;
 var postUpdatedMonI;
 var nextID = 100;
 
+var IID = 1;
+
 $(function(){
 	
 	$('.add-item-text').on('click', loadTextItem);	
@@ -32,15 +34,35 @@ $(function(){
 
 	$('#content-form').fileupload({
         dataType: 'json',
-        sequentialUploads: false,
+        sequentialUploads: true,
         add: function (e, fileForm) {
 
+        	// console.log('add');
         	// console.log(e);
         	// console.log(fileForm);
 
+        	// IID++;
+
+        	// console.log(IID);
+
+        	// return;
+
+        	if(typeof fileForm.galleryID != 'undefined')
+        	{
+        		console.log('create gallery! ' + fileForm.galleryID);
+
+        		fileForm.url = moduleJSON + 'section/gallery';	
+				fileForm.formData = { id: fileForm.galleryID };
+				fileForm.submit(); 
+
+        		return;
+        	}
+
+
         	if(fileForm.paramName == "gallery")
         	{
-        		return add2gallery(this, e, fileForm);
+        		add2gallery(this, e, fileForm);
+        		return;
         	}
 
         	$.post(moduleJSON + 'section/new', {type: 'image', article_id: articleID}, function(data)
@@ -72,8 +94,19 @@ $(function(){
         },
         
         submit: function (e, data) {
+        	// console.log('SUBMIT -----');
+        	// console.log(e);
+        	// console.log(data);
+        	// console.log('------------');
+        	// return false;
         },
         send: function (e, data) {
+        	// console.log('SEND --- ');
+        	// console.log(e);
+        	// console.log(data);
+        	// console.log('---------');
+
+        	// return false;
         },
         change: function (e, data) {		
         	
@@ -91,6 +124,48 @@ $(function(){
     })
  	.bind('fileuploadstart', picsUploadStart)
  	.bind('fileuploadstop', picsAllUploaded)
+ 	.bind('fileuploadchange', function (e, data) {
+ 		console.log('Change');
+ 		console.log(e);
+ 		console.log(data);
+
+ 		if(data.fileInput[0].name != 'gallery_create') return true;
+
+ 		createSection('gallery', function (res) {
+ 			console.log('Gallery created!');
+ 			console.log(res);
+
+
+ 			var $imageItem = $('#templates .a-item-gallery').clone()
+					.data('id', res.id)
+					.attr('id', 'item'+res.id)
+					.appendTo('.a-items');
+
+				// var reader = new FileReader();            
+	   //          reader.onload = function (e) {
+	   //              $('<img>').attr('src', e.target.result).appendTo($imageItem.find('.image'));
+	   //          }
+	            
+	   //          reader.readAsDataURL(fileForm.files[0]);
+
+
+				$('.content-pre', $imageItem).attr('id', 'sections['+res.id+'][text_data]');
+				$('.content-post', $imageItem).attr('id', 'sections['+res.id+'][text_data1]');
+				initItemEditor('#item'+res.id+' .editable', false);
+
+			$('#content-form').fileupload('add', {files: data.files, galleryID: res.id}); 			
+ 		});
+
+
+ 		return false;
+ 	})
+ 	.bind('fileuploadstart', function (e) {
+ 		// console.log('Start! ---- ');
+ 		// console.log(e);
+ 		// console.log('----------- ');
+
+ 		// return false;
+ 	})
  	.bind('fileuploadprogressall', picUploading);
 
 
@@ -114,6 +189,9 @@ $(function(){
 
 function add2gallery(that, e, fileForm) 
 {
+	console.log('add 2 gallery!');
+	console.log(e);
+	console.log(fileForm);
 	$item = $(e.delegatedEvent.originalEvent.path[1])
 				.closest('.a-item');
     
@@ -291,19 +369,21 @@ function pictureUploaded(e, data) {
 }
 
 function picsAllUploaded(e, data){
-	console.log('all pics uploaded!');
+	$('#photosProgress').slideUp();
 	save();
 }
 
 function	picsUploadStart(e, data){
-	$('#postPictures .pics').prepend('<div class="pics-loading"><p>загрузка картинок<span></span>...</p><div class="progress progress-striped active"><div class="progress-bar"  role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div></div>');
-	//console.log(data);
+	
 }
 
 var bitRateInfo = '';
 function picUploading(e, data){
 	console.log(data);
-	$('#postPictures .progress .progress-bar').css({width: Math.round(data.loaded / data.total * 100)+'%'});
+	$('#photosProgress').slideDown();
+	var percent = Math.round(data.loaded / data.total * 100);
+	$('#photosProgress .progress-bar')
+		.css({width: percent+'%'}).html(percent+'%');
 
 	if((typeof data.total != 'undefined' && data.total > 0)){
 		if(data.total/1000 > 2000000){
@@ -335,6 +415,6 @@ function picUploading(e, data){
 	}
 
 
-	$('.pics-loading span').html(bitRateInfo);
+	$('#photosProgress .bitrate-info').html(bitRateInfo);
 }
 

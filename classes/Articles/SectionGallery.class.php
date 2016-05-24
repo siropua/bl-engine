@@ -8,6 +8,8 @@ namespace Articles;
 class SectionGallery extends SectionImage
 {
 
+	protected static $myType = 'gallery';
+
 	public function uploadPic($file)
 	{
 		$this->maxHeight = $this->int_data2;

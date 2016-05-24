@@ -47,6 +47,16 @@ class module_articles_section extends rMyAdminModule
 		return $section->getData();
 	}
 
+	public function addType_gallery()
+	{
+		if(!$article = rMyArticle::get($_POST['article_id']))
+			throw new rNotFoundException('Article not exists');
+			
+		$section = Articles\SectionGallery::createSection($article);
+
+		return $section->getData();
+	}
+
 
 	public function RunAJAX_image()
 	{
@@ -92,7 +102,9 @@ class module_articles_section extends rMyAdminModule
 
 	public function RunAJAX_gallery()
 	{
-		if(empty($_POST['id'])) return false;
+		if(empty($_POST['id'])) {
+			return false;
+		}
 		if(empty($_FILES['gallery']['tmp_name'])) return false;
 		if(!is_uploaded_file($_FILES['gallery']['tmp_name'])) return false;
 
@@ -108,4 +120,5 @@ class module_articles_section extends rMyAdminModule
 		];
 		return $section->getData();
 	}
+
 }

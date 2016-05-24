@@ -64,6 +64,11 @@ input.title{
 	max-height: 150px;
 }
 
+#photosProgress{
+	margin-top: 10px;
+	display: none;
+}
+
 /** old garbrage */
 
 .imgThumb{
