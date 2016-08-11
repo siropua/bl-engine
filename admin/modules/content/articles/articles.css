@@ -43,8 +43,30 @@ input.title{
 	border: 1px solid #bbb;
 }
 
-.a-item-image .image img{
+.a-item-image .image img,.a-item-gallery .gallery img{
 	max-width: 100%;
+}
+
+.a-item-gallery .gallery ul{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.a-item-gallery .gallery ul li{
+	display: inline-block;
+	max-width: 300px;
+	margin: 5px 2px;
+}
+
+.a-item-gallery .gallery ul li img{
+	max-width: 300px;
+	max-height: 150px;
+}
+
+#photosProgress{
+	margin-top: 10px;
+	display: none;
 }
 
 /** old garbrage */

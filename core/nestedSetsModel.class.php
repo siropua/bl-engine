@@ -46,9 +46,8 @@ class nestedSetsModel
 	}
 
 	public function delete($id)
-	{
-		$class = $this->className;
-		if(!$item = $class::get($id)) return false;
+	{	
+		if(!$item = $this->getObject($id)) return false;
 
 		$r = $item->right_key;
 		$l = $item->left_key;
@@ -59,8 +58,26 @@ class nestedSetsModel
 		return true;
 	}
 
+	public function getObject($id)
+	{
+		$class = $this->className;
+		return $item = $class::get($id);
+	}
+
 	public function getAssoc($startID = 0)
 	{
 		
+	}
+
+	public function getParents($idOrModel)
+	{
+		if(!is_object($idOrModel))
+		{
+			if(!$idOrModel = $this->getObject($idOrModel)) return [];
+		}
+
+		$parents = $this->db->select('SELECT * FROM ?# WHERE left_key <= ?d AND right_key >= ?d ORDER BY left_key', $this->tableName, $idOrModel->left_key, $idOrModel->right_key);
+
+		return $parents;
 	}
 }

@@ -8,14 +8,6 @@ if(file_exists(SITE_PATH.'/lib/exceptions.php'))
 
 if(file_exists(__DIR__.'/vendor/autoload.php')) require_once __DIR__.'/vendor/autoload.php';
 
-/**
-	перехват ошибок выполнения
-**/
-//require_once('rlib/errorhook/Listener.php');
-//require_once('rlib/errorhook/rSiteNotifier.php');
-//$errorsHandler = new Debug_ErrorHook_Listener();
-//$errorsHandler->addNotifier(new rSiteNotifier(rSiteNotifier::LOG_ALL));
-
 require_once(__DIR__.'/init/errorhook.php');
 
 /**
@@ -102,7 +94,7 @@ try{
 		}
 	});
 
-	require_once 'core/rURL.class.php';
+	require_once 'core/rURLHandler.class.php';
 	require_once 'core/router.class.php';
 	require_once 'core/dates.class.php';
 	

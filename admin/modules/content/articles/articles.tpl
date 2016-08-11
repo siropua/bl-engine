@@ -47,7 +47,7 @@
   </thead>
   <tbody>
     {foreach from=$articles item=a}
-    <tr>
+    <tr id="tr{$a.id}" data-id="{$a.id}">
       <td>{$a.date_add|FormatDateTime}</td>
       <td><strong><a href="?id={$a.id}">{$a.title}</a></strong>
         {if $a.url}<div><small><a href="{$ROOT}{$a.url}">{$ROOT}{$a.url}</a></small></div>{/if}
@@ -57,7 +57,7 @@
       <td></td>
       <td>
       <a href="?id={$a.id}" class="btn btn-xs btn-default"><i class="fa fa-edit"></i></a>
-      <button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></td>
+      <button class="btn btn-xs btn-danger btn-delete"><i class="fa fa-trash"></i></button></td>
     </tr>
     {/foreach}
   </tbody>

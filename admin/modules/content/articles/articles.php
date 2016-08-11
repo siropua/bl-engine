@@ -65,7 +65,7 @@ class module_articles extends rMyAdminModule
 
 	public function publishArticle(Articles\Article $a, $data)
 	{
-		// if(!empty($_POST)) $this->app->dump($_POST);
+		// if(!empty($_POST)) $this->app->dump($_POST, true, false);
 
 		$postData = $data['post'];
 		$postData['last_update'] = time();

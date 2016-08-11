@@ -12,94 +12,27 @@ class module_articles_article extends rMyAdminModule{
 	**/
 	public function Run_save()
 	{
-		$_POST['tags'] = trim($_POST['as_values_tags'], ' ,');
-		$p = $_POST;
-		
+		if(empty($_POST['id'])) return false;
+		if(!$a = Articles\Article::get($_POST['id'])) return false;
 
-		if(empty($p['postID']) || (!$postID = intval($p['postID']))){
-			// создание поста (точнее его черновика)
-			$r = rMyArticle::create($p);
+		$postData = $_POST['post'];
+		$postData['last_update'] = time();
 
-			$post = $r->getData();
-			$post['action'] = 'created';
-		}else{
-			if(!$r = rMyArticle::get($p['postID']))
-				throw new rNotFoundException('Article not found');
-				
-			$r->edit($p);
-
-			$post = $r->getData();
-			$post['action'] = 'saved';
+		foreach ($_POST['sections'] as $id => $sec_data) {
+			$a->setSectionData($id, $sec_data);
 		}
 
-		@session_start();
-		$_SESSION['admin-temp-post-id'] = $post['id'];
+		$postData['text'] = $a->renderSectionsAsText();
 
-		$result = array('ok' => 1, 'post' => $post);
-
-
-		return $result;
-	}
-
-	public function Run_attach(){
-		
-		if(empty($_POST['postID'])){
-			throw new JSONException('post-id not specified');
-		}
-
-		if(empty($_FILES['secpic']['tmp_name'])){
-			throw new JSONException('file not specified');
-			
-		}
-
-		$b = new rMyBlog($this->app);
-		$post = new rBlogPost($b, $_POST['postID']);
-
-		$fn = $post->attachPic($_FILES['secpic']);
-
-		if(!$fn) throw new JSONException('Cant attach picture!');
-
-		$result = array('ok' => 1, 'pic' => $fn);
-		
-
-		return $result;
-	}
-
-	public function Run_attachweb()
-	{
-		if(empty($_POST['postID'])){
-			throw new JSONException('post-id not specified');
-		}
-
-		if(empty($_POST['pic'])){
-			return array();
-		}
-
-		$picName = basename($_POST['pic']);
+		$a->setFields($postData, true);
 
 
-		$b = new rMyBlog($this->app);
-		$post = new rBlogPost($b, $_POST['postID']);
-
-		$tmpPic = TMP_PATH.'/'.uniqid('webpic');
-		require 'rlib/vibrowser.inc.php';
-		$vb = new ViBrowser;
-		$vb->setURL($_POST['pic']);
-		$vb->getURLToFile($_POST['pic'], $tmpPic);
-
-		if(!file_exists($tmpPic)) throw new Exception('Cant download a pic');
-
-		$fn = $post->attachPic(array(
-			'tmp_name' => $tmpPic,
-			'name' => $picName,
-		)); 
-
-		if(!$fn) throw new JSONException('Cant attach picture!');
-
-		$result = array('ok' => 1, 'pic' => $fn);
-		
-
-		return $result;
+		return [
+			'ok' => 1,
+			'status' => $a->status,
+			'id' => $a->id,
+			'last_update' => $a->last_update
+		];
 	}
 
 	public function Run_delete()
@@ -107,13 +40,13 @@ class module_articles_article extends rMyAdminModule{
 
 		if(empty($_POST['id'])) throw new JSONException('Specify ID!');
 
-		$b = new rMyBlog($this->app);
-		$post = new rBlogPost($b, $_POST['id']);
-		if(!$post->delete()){
-			throw new JSONException('Cant delete post!');
-		}
+		if(!$a = Articles\Article::get($_POST['id'])) throw new rNotFoundException("");
+		/**
+		 * @todo удаление картинок и прочих ресурсов
+		 */
+		$a->remove();
 
-		return array('deleted_id' => $post->id);
+		return 'OK';
 		
 	}
 	

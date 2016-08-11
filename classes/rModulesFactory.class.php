@@ -177,18 +177,21 @@ class rModulesFactory extends iModulesFactory{
 		if(!$url = \ble\rURL::getURL($_SERVER['REQUEST_URI']))
 			return false;
 
-		if(!$url->handler) return false;
+		if(!$url->handler || !$url->handled_id) return false;
 
 		$class = 'rMyURLHandler_'.$url->handler;
-		if(file_exists(ENGINE_PATH.'/lib/'.$class.'.class.php'))
-			require_once ENGINE_PATH.'/lib/'.$class.'.class.php';
-		elseif(file_exists(SITE_PATH.'/lib/'.$class.'.class.php'))
-			require_once SITE_PATH.'/lib/'.$class.'.class.php';
+		if(file_exists(ENGINE_PATH.'/lib/handlers/'.$class.'.class.php'))
+			require_once ENGINE_PATH.'/lib/handlers/'.$class.'.class.php';
+		elseif(file_exists(SITE_PATH.'/lib/handlers/'.$class.'.class.php'))
+			require_once SITE_PATH.'/lib/handlers/'.$class.'.class.php';
 
 		if(class_exists($class))
 		{
-			
+			$module = new $class($url);
+			return $module;
 		}
+
+		return false;
 	}
 
 
