@@ -560,7 +560,7 @@ class rUser{
 	*/
 	public function setFields($array)
 	{
-		$res = $this->db->query('UPDATE ?# SET ?a WHERE id = ?', USERS_TABLE, $array, $this->_ID);
+		$res = $this->db->query('UPDATE '.$this->getTableName('users').' SET ?a WHERE id = ?', $array, $this->_ID);
 		$this->data = $array + $this->data;
 
 		return $this;
@@ -838,7 +838,12 @@ class rUser{
 		}
 		return true;
 	}
-	
+
+
+	public function getEmailCode()
+	{
+		return md5($this->email.$this->id.$this->salt.$this->datereg);
+	}
  
 }
 

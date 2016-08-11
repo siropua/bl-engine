@@ -46,6 +46,43 @@ class BLEngineJSONException extends JsonResponseHandler
 $run     = new Run();
 
 
+$exceptionSilentMode = (IS_DEVELOP == 2) && file_exists(DESIGN_PATH.'/errors/fatal.tpl');
+
+if($exceptionSilentMode){
+    /**
+    * Empty error
+    */
+    class BLEngineProdException extends Handler
+    {
+        private $returnFrames = false;
+        public function handle()
+        {
+            
+            $exception = $this->getException();
+
+            $response = sprintf("%s: %s in file %s on line %d\n",
+                    get_class($exception),
+                    $exception->getMessage(),
+                    $exception->getFile(),
+                    $exception->getLine()
+                );
+
+            ini_set('display_error', 'no');
+
+            file_put_contents(VAR_PATH.'/logs/fatal.log', $response, FILE_APPEND);
+
+            $display = file_get_contents(DESIGN_PATH.'/errors/fatal.tpl');
+
+            echo ($display);
+
+            return Handler::QUIT;
+        }
+        
+    }
+
+    $handler = new BLEngineProdException;
+
+}else
 if(defined('IS_JSON_MODE') && IS_JSON_MODE)
 {
 	$handler = new BLEngineJSONException();
