@@ -3,6 +3,6 @@
 require_once 'classes/rCLIModule.class.php';
 
 
-abstract class rMyCLIModule extends rModule{
+abstract class rMyCLIModule extends rCLIModule{
 
 }
