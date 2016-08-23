@@ -71,6 +71,12 @@ class rURLParser
 		return $this->parts[$n];
 	}
 
+	public function rawPart($n)
+	{
+		if(empty($this->rawParts[$n])) return '';
+		return $this->rawParts[$n];
+	}
+
 	public function partsCount()
 	{
 		return count($this->parts);
