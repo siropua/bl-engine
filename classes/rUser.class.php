@@ -90,6 +90,8 @@ class rUser{
 	protected $_lastAuthError = '';
 	protected $currentToken;
 
+	protected $deviceID = '';
+
 	protected $tablePrefix = '';
 
 	protected $_selectString = 'SELECT u.* FROM users AS u ';
@@ -119,6 +121,8 @@ class rUser{
 		}
 
 		$this->_selectString = 'SELECT u.*, '.LOGIN_FIELD.' as login FROM '.$this->getTableName('users').' AS u ';
+
+		$this->deviceID = md5('empty');
 	}
 
 	public function getTableName($table)
@@ -299,7 +303,12 @@ class rUser{
 		/**
 		* @todo сделать определение юзерского девайса. для мобилок это одно, для браузеров другое
 		 */
-		return md5('empty');
+		return $this->deviceID;
+	}
+
+	public function setDeviceID($deviceID)
+	{
+		$this->deviceID = $deviceID;
 	}
 
 	/**
@@ -361,7 +370,7 @@ class rUser{
 		
 		setcookie($this->_cookie_prefix.'access_token', '', 0, $this->_cookie_path);
 
-		$this->db->query('DELETE FROM '.$this->getTableName('users_devices').' WHERE user_id = ?d', $this->id);
+		$this->db->query('DELETE FROM '.$this->getTableName('users_devices').' WHERE user_id = ?d AND access_token = ?', $this->id, $this->getCurToken());
 
 		$this->_resetState();
 
