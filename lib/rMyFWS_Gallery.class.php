@@ -13,7 +13,7 @@ class rMyFWS_Gallery extends rExternalFW{
 	{
 
 		$app->addFWJS('multi_uploader/js/vendor/jquery.ui.widget.js');
-		$app->addFWJS('multi_uploader/js/load-image.min.js');
+		$app->addFWJS('multi_uploader/js/load-image.all.min.js');
 		$app->addFWJS('multi_uploader/js/canvas-to-blob.min.js');
 		//$app->addFWJS('multi_uploader/js/jquery.fileupload-image.js');
 		$app->addFWJS('multi_uploader/js/jquery.fileupload.js');

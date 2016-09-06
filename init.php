@@ -6,15 +6,9 @@ require_once ENGINE_PATH.'/classes/rException.class.php';
 if(file_exists(SITE_PATH.'/lib/exceptions.php'))
 	include_once(SITE_PATH.'/lib/exceptions.php');
 
+if(file_exists(__DIR__.'/vendor/autoload.php')) require_once __DIR__.'/vendor/autoload.php';
 
-
-/**
-	перехват ошибок выполнения
-**/
-require_once('rlib/errorhook/Listener.php');
-require_once('rlib/errorhook/rSiteNotifier.php');
-$errorsHandler = new Debug_ErrorHook_Listener();
-$errorsHandler->addNotifier(new rSiteNotifier(rSiteNotifier::LOG_ALL));
+require_once(__DIR__.'/init/errorhook.php');
 
 /**
 	пагнали подключать все необходимое
@@ -39,11 +33,7 @@ try{
 	require_once 'core/baseTableModel.class.php';
 	require_once 'core/baseListModel.class.php';
 	require_once 'core/baseTreeModel.class.php';
-	require_once 'core/router.class.php';
-	require_once 'core/dates.class.php';
 	
-
-
 
 	// автоподключение классов 
 	spl_autoload_register(function($class){
@@ -59,6 +49,10 @@ try{
 			if(file_exists(SITE_PATH.'/models/base/'.$file2include)){
 				include_once SITE_PATH.'/models/base/'.$file2include;
 				return;
+			}elseif(file_exists(ENGINE_PATH.'/models/base/'.$file2include))
+			{
+				include_once ENGINE_PATH.'/models/base/'.$file2include;
+				return;
 			} //else echo 'FILE NOT FOUND '.SITE_PATH.'/models/base/'.$file2include;
 			exit;
 		}elseif (substr($class, 0, 6) == 'model_') {
@@ -66,6 +60,10 @@ try{
 			
 			if(file_exists(SITE_PATH.'/models/'.$file2include)){
 				include_once SITE_PATH.'/models/'.$file2include;
+				return;
+			}elseif(file_exists(ENGINE_PATH.'/models/'.$file2include))
+			{
+				include_once ENGINE_PATH.'/models/'.$file2include;
 				return;
 			}
 		}
@@ -95,6 +93,12 @@ try{
 			
 		}
 	});
+
+	require_once 'core/rURLHandler.class.php';
+	require_once 'core/router.class.php';
+	require_once 'core/dates.class.php';
+	
+
 	
 
 

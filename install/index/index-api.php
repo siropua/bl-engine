@@ -4,12 +4,14 @@
 /** Инклудим конфиги **/
 if(!include_once 'configs/web.php') die('Site not installed!');
 
+define('IS_JSON_MODE', true); 
+
+
 /** Инклудим движок **/
 include_once ENGINE_PATH.'/init.php';
 
 $module = null;
 
-define('IS_JSON_MODE', true); 
 
 
 function echoJSON($data, $error_msg = '', $error_code = 0, $globalStatus = 200)
@@ -59,6 +61,8 @@ try{
 	
 
 	$_APP = rMyApp::getInstance();
+	$_APP->loadComponents();
+	$_APP->user->authed();
 
 	
 
@@ -86,11 +90,8 @@ try{
 }catch(rNotFound $e){
 	//if(!$module) $module = new rMySite($_APP);
 
-	echoJSON(false, $e->getMessage() or 'Not found', $e->getCode());
+	echoJSON(false, $e->getMessage() ? $e->getMessage() : 'Not found', $e->getCode());
 
-
-// }catch(){
-// 	echoJSON(false, $e->getMessage(), 401, 401);
 	
 }catch(Exception $e){
 	echoJSON(false, $e->getMessage(), $e->getCode());

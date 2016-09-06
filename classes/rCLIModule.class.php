@@ -2,7 +2,7 @@
 
 
 
-abstract class rModule{
+abstract class rCLIModule{
 
 	protected $app = null;
 
@@ -30,6 +30,7 @@ abstract class rModule{
 	
 	public function log($txt, $file = 'all.log')
 	{
+		if(!is_string($txt)) $txt = print_r($txt, true);
 	    $str = $this->app->log($txt, $file);
 	    echo $str."\n";
 	}

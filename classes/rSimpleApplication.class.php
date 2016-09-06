@@ -39,6 +39,12 @@ abstract class rSimpleApplication{
 	}
 
 
+	public function loadComponents()
+	{
+		return  true;
+	}
+
+
 	
 
 	/**
@@ -173,6 +179,23 @@ abstract class rSimpleApplication{
 	public function path($path)
 	{
     	    return $this->url->path($path);
+	}
+
+
+	public function dump($variable, $exit = true, $var_dump = true)
+	{
+		echo '<pre>';
+		if($var_dump)
+		{
+			var_dump($variable);
+		}else
+		{
+			print_r($variable);
+		}
+		echo '</pre>';
+
+
+		if($exit) exit;
 	}
 
 	/**

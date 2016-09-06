@@ -32,9 +32,10 @@ class rModulesFactory extends iModulesFactory{
 		foreach ($this->order as $method) {
 			$method = 'get_'.$method;
 			// все не сущестующие методы не вызываем
-			if(!method_exists(__CLASS__, $method)) continue; 
+			
+			if(!method_exists($this, $method)) continue; 
 
-			if($module = self::$method()) return $module;
+			if($module = $this->$method()) return $module;
 		}
 
 
@@ -121,7 +122,6 @@ class rModulesFactory extends iModulesFactory{
 		пытаемся найти страницу в таблице статических страниц
 	**/
 	public function get_page(){
-
 		if($text = @$this->db->selectRow('SELECT * FROM static_pages WHERE url = ?', $this->rURL->safePath())){
 
 
@@ -166,6 +166,32 @@ class rModulesFactory extends iModulesFactory{
 		}
 
 		return false; // ничего не нашли
+	}
+
+	/**
+	 * Поиск по базе urls
+	 * @return module [description]
+	 */
+	public function get_url()
+	{
+		if(!$url = \ble\rURL::getURL($_SERVER['REQUEST_URI']))
+			return false;
+
+		if(!$url->handler || !$url->handled_id) return false;
+
+		$class = 'rMyURLHandler_'.$url->handler;
+		if(file_exists(ENGINE_PATH.'/lib/handlers/'.$class.'.class.php'))
+			require_once ENGINE_PATH.'/lib/handlers/'.$class.'.class.php';
+		elseif(file_exists(SITE_PATH.'/lib/handlers/'.$class.'.class.php'))
+			require_once SITE_PATH.'/lib/handlers/'.$class.'.class.php';
+
+		if(class_exists($class))
+		{
+			$module = new $class($url);
+			return $module;
+		}
+
+		return false;
 	}
 
 

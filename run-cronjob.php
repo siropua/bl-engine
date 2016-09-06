@@ -13,13 +13,22 @@ if(empty($m['f'])) exit("\nNo file specified\n");
 
 $file = $m['f'].'.php';
 
-if(file_exists(SITE_PATH."/cron/$file")){
-    include_once SITE_PATH."/cron/$file";
-}elseif(file_exists(ENGINE_PATH."/cron/$file")){
-    include_once ENGINE_PATH."/cron/$file";
-}else{
-    exit("\nFile '$file' not found!\n");
+ini_set('display_errors', 'on');
+error_reporting(E_ALL);
+
+try{
+	if(file_exists(SITE_PATH."/cron/$file")){
+	    include_once SITE_PATH."/cron/$file";
+	}elseif(file_exists(ENGINE_PATH."/cron/$file")){
+	    include_once ENGINE_PATH."/cron/$file";
+	}else{
+	    exit("\nFile '$file' not found!\n");
+	}
+}catch(Exception $e){
+	exit("Error: ".$e->getMessage());
 }
+
+
 
 $className = 'cron_'.preg_replace('~[^a-z0-9]~i', '_', $m['f']);
 
@@ -35,8 +44,11 @@ if(!method_exists($className, $method)){
     exit("\nMethod '$method' not found in '$className' at '$file'\n");
 }
 
-
-$class = new $className(rMyCLIApp::getInstance());
-$class->$method();
+try{
+	$class = new $className(rMyCLIApp::getInstance());
+	$class->$method();
+}catch(Exception $e){
+	exit("Error: ".$e->getMessage()."\n\n");
+}
 
 echo "\n";

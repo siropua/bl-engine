@@ -588,4 +588,25 @@ CREATE TABLE `users_stats` (
 
 
 
+CREATE TABLE `users_devices` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `access_token` varchar(50) NOT NULL,
+  `device_id` varchar(255) NOT NULL DEFAULT '',
+  `app_id` varchar(32) NOT NULL DEFAULT '',
+  `device_token` varchar(255) NOT NULL,
+  `os_ver` varchar(50) DEFAULT NULL,
+  `is_device_token_valid` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `timezone` int(11) DEFAULT NULL,
+  `device_name` varchar(50) DEFAULT NULL,
+  `class_name` enum('other','ios','android') NOT NULL DEFAULT 'other',
+  `locale` varchar(4) NOT NULL DEFAULT '',
+  `last_update` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `access_token` (`access_token`,`device_id`),
+  KEY `valid_class` (`is_device_token_valid`,`class_name`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `users_devices_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
 SET FOREIGN_KEY_CHECKS=1;

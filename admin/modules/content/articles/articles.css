@@ -1,0 +1,313 @@
+#content-form{
+	margin-top: 20px;
+}
+
+#templates{
+	display: none;
+}
+
+input.title{
+	font-size: 26px;
+	border: 0;
+	box-shadow: none;
+}
+
+.editable{
+	min-height: 1em;
+	padding: 5px 10px;
+	border-left: 1px solid #eee;
+}
+
+.a-row{
+	border-top: 1px dotted #ddd;
+}
+
+.a-row-type{
+	background: #ddd;
+	border-radius: 0 0 4px 4px;
+	padding: 2px 5px;
+	padding-top: 5px;
+	font-size: 10px;
+}
+
+.a-items .a-item:last-child .btn-action-down,.a-items .a-item:first-child .btn-action-up{
+	display: none;
+}
+
+.articles-catalog{
+	margin-top: 20px;
+}
+
+.articles-catalog li{
+	background: #eee;
+	border: 1px solid #bbb;
+}
+
+.a-item-image .image img,.a-item-gallery .gallery img{
+	max-width: 100%;
+}
+
+.a-item-gallery .gallery ul{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.a-item-gallery .gallery ul li{
+	display: inline-block;
+	max-width: 300px;
+	margin: 5px 2px;
+}
+
+.a-item-gallery .gallery ul li img{
+	max-width: 300px;
+	max-height: 150px;
+}
+
+#photosProgress{
+	margin-top: 10px;
+	display: none;
+}
+
+/** old garbrage */
+
+.imgThumb{
+	float: left;
+	padding: 5px;
+	margin: 1px;
+	border: 1px solid gray;
+	cursor: hand;
+	cursor: pointer;
+	
+}
+
+#fTitle{
+	font-size: 1.2em;
+}
+
+#thumbImg{
+	width: 102px;
+	height: 102px;
+	border: 1px solid #aaa;
+}
+
+#waitInd{
+	display: inline;
+}
+
+#lImgForm{
+	float: left;
+	width: 30em;
+}
+
+#rImgForm{
+	float: left;
+	width: 10em;
+}
+
+
+tr.deferred td{
+	color: #666;
+}
+
+tr.deferred a, tr.deferred a:visited{
+	color: #666;
+}
+
+.with-deferred{
+	font-weight: bold;
+}
+
+
+
+#postMap{
+	width: 600px;
+	height: 400px;
+	border: 1px solid #666;
+	float: left;
+	margin-right: 2em;
+}
+
+#mainTags{
+	padding: .4em 0;
+}
+
+#mainTags a{
+	text-decoration: none;
+	font-weight: bold;
+	color: #666;
+	padding: .3em .7em;
+	background: #EEE;
+	line-height: 1.9em;
+	white-space: nowrap;
+}
+
+#mainTags a:hover{
+	background: #DDD;
+}
+
+#mainpicPreview{
+	display: none;
+	width: 200px;
+}
+
+#mainpicPreview img{
+	border: 1px solid #000;
+	background: white;
+	padding: 3px;
+}
+
+#referersList{
+	height: 25em;
+	overflow: auto;
+	width: 580px;
+	padding: 5px;
+	background: white;
+}
+
+#referersWindow{
+	width: 600px;
+}
+
+.fileinput-button {
+	position: relative;
+	overflow: hidden;
+}
+
+
+.fileinput-button input{
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	opacity: 0;
+	filter: alpha(opacity=0);
+	transform: translate(-300px, 0) scale(4);
+	font-size: 23px;
+	direction: ltr;
+	cursor: pointer;
+}
+
+.post-mode{
+	margin-top: 10px;
+}
+
+.no-pics{
+	text-align: center;
+	padding: 20px 2px;
+	color: #888;
+	font-size: .9em;
+}
+
+.rotation{
+	-webkit-animation:spin 0.5s linear infinite;
+    -moz-animation:spin 0.5s linear infinite;
+    animation:spin 0.5s linear infinite;
+}
+
+#postPictures .pics ul{
+	list-style: none;
+	margin: 0; 
+	padding: 0;
+}
+
+#postPictures ul li{
+	margin-bottom: 5px;
+}
+
+#postPictures .photo-description{
+	font-size: .9em;
+	cursor: pointer;
+	padding: 2px;
+	border-radius: 4px;
+}
+
+#postPictures .photo-description:hover{
+	background: #FAD89D;
+}
+
+#postPictures .no-text{
+	font-style: italic;
+	color: #666;
+}
+
+#postPictures ul .photo{
+	margin-right: 5px;
+}
+
+
+#editPicDescr .photoRow{
+	margin: 0 0 5px 0;
+}
+
+#editPicDescr .photoRow img{
+	max-width: 100%;
+	max-height: 350px;
+}
+
+.editPicDescr{
+
+}
+
+/**
+	SORTABLE
+
+**/
+
+.sortable.grid {
+        overflow: hidden;
+}
+.connected li, .sortable li, .exclude li, .handles li {
+        /*margin: 5px;*/
+        padding: 5px;
+        height: 122px;
+}
+.handles span {
+        cursor: move;
+}
+li.disabled {
+        opacity: 0.5;
+}
+.sortable.grid li {
+        line-height: 80px;
+        float: left;
+        width: 80px;
+        height: 80px;
+        text-align: center;
+}
+li.highlight {
+        background: #FEE25F;
+}
+#connected {
+        width: 440px;
+        overflow: hidden;
+        margin: auto;
+}
+.connected {
+        float: left;
+        width: 200px;
+}
+.connected.no2 {
+        float: right;
+}
+li.sortable-placeholder {
+        border: 1px dashed #CCC;
+        background: none;
+}
+
+#postPictures .sortable li:first-child .btn-move-pic-up{
+	display: none;
+}
+
+#postPictures .sortable li:last-child .btn-move-pic-down{
+	display: none;
+}
+
+
+#blogPostForm[data-mode=photo]{
+}
+
+
+.action-buttons{
+	white-space: nowrap;
+}

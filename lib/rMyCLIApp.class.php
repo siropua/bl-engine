@@ -19,4 +19,11 @@ class rMyCLIApp extends rApplication{
         }
         return self::$instance;
 	}
+/*
+	public function log($text)
+	{
+		$text = parent::log($text);
+
+		echo $text;
+	} */
 }
