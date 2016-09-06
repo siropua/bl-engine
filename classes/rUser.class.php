@@ -224,12 +224,13 @@ class rUser{
 	 */
 	public function getTokenInfo($access_token)
 	{
-		return $this->db->selectRow('SELECT * FROM users_devices WHERE access_token = ? AND device_id = ?', $access_token, $this->getDeviceID());
+		return $this->db->selectRow('SELECT * FROM users_devices WHERE access_token = ? -- AND device_id = ?', $access_token, $this->getDeviceID());
 	}
 
 	public function authByToken($access_token)
 	{
 		$token = $this->getTokenInfo($access_token);
+//		print_r($token); exit;
 		if(!$token) return false;
 
 		$this->getByID($token['user_id']);

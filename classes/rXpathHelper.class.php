@@ -75,7 +75,14 @@ class rXpathHelper
 	public function getElement($query, $parent = NULL)
 	{
 		$result = $this->query($query, $parent);
-		return $result->length ? $result->items(0) : NULL;
+		return $result->length ? $result->item(0) : NULL;
+	}
+
+	public function getAttr($query, $attr, $parent = NULL)
+	{
+		if(!$element = $this->getElement($query, $parent)) 
+			return false;
+		return $element->getAttribute($attr);
 	}
 
 	public function getValue($query, $parent = NULL)
