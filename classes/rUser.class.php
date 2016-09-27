@@ -241,6 +241,7 @@ class rUser{
 	public function authByToken($access_token)
 	{
 		$token = $this->getTokenInfo($access_token);
+//		print_r($token); exit;
 		if(!$token) return false;
 
 		$this->getByID($token['user_id']);
