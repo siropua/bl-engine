@@ -282,3 +282,8 @@ display: table;
 	margin-bottom: 8px;
 	padding-top: 0;
 }
+
+.clickable{
+	cursor: hand;
+	cursor: pointer;
+}
