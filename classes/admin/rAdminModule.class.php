@@ -24,12 +24,10 @@ abstract class rAdminModule extends rModule{
 
 		$this->db = $app->db;
 		$this->me = $info;
-		
 	}
 
 	/******** SELECTORS *****************************/
 	public function selectSection($section){
-
 		$section = $this->app->url->URLize($section);
 
 		if(empty($this->menu[$section])){

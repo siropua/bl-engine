@@ -242,13 +242,24 @@ class rAdminModulesFactory extends iModulesFactory{
 		берем главную админки 
 	**/
 	public function getIndexModule(){
+		$moduleInfo = [];
 		if(file_exists(SITE_PATH.'/'.ADMIN_FOLDER.'/index.php')){
+			$this->app->setTemplate(SITE_PATH.'/'.ADMIN_FOLDER.'/index.tpl');
+			$this->app->tpl->template_dir = SITE_PATH.'/'.ADMIN_FOLDER .'/';
+			$this->app->setStdTemplatesFolder(SITE_PATH.'/'.ADMIN_FOLDER.'/');
+			$moduleInfo['res_url'] = ROOT_URL.SITE_FOLDER.'/'.ADMIN_FOLDER.'/';
+			if(file_exists(SITE_PATH.'/'.ADMIN_FOLDER.'/index.css'))
+				$this->app->addCSS($moduleInfo['res_url'].'index.css');
+
+			if(file_exists(SITE_PATH.'/'.ADMIN_FOLDER.'/index.js'))
+				$this->app->addJS($moduleInfo['res_url'].'index.js');
+
 			require_once SITE_PATH.'/'.ADMIN_FOLDER.'/index.php';
 		}else{
 			require_once ENGINE_PATH.'/admin/index.php';
 		}
 
-		return new admin_module_index($this->app, false);
+		return new admin_module_index($this->app, $moduleInfo);
 	}
 
 	public function getLoginModule()
